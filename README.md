@@ -1,6 +1,6 @@
 # Symphony XTS API
 
-C# client of the Symphony XTS API developed by Symphony Fintech, a leading technology provider for capital market players with key focus on automated trading, OEMS, market connectivity and cross-asset front-to-back office trading solutions.
+C# client of the Symphony XTS API. The XTS API is developed by Symphony Fintech, a leading technology provider for capital market players with key focus on automated trading, OEMS, market connectivity and cross-asset front-to-back office trading solutions.
 
 ## Requirements
 - .Net Framework 4.5.1 and above
