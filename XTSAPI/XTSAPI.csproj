@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0892706F-6DA0-41BA-B854-4AE718FE2EC8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XTSAPI</RootNamespace>
+    <AssemblyName>XTSAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EngineIoClientDotNet, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EngineIoClientDotNet.1.0.2-beta1\lib\net45\EngineIoClientDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SocketIoClientDotNet, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SocketIoClientDotNet.1.0.2-beta1\lib\net45\SocketIoClientDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.8.0.12\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConnectionState.cs" />
+    <Compile Include="ErrorResult.cs" />
+    <Compile Include="ExceptionEventArgs.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="InstrumentDumpPayload.cs" />
+    <Compile Include="Interactive\BalanceResult.cs" />
+    <Compile Include="Interactive\CoverOrderResult.cs" />
+    <Compile Include="Interactive\ProfileBase.cs" />
+    <Compile Include="Interactive\ExitCoverOrderPayload.cs" />
+    <Compile Include="Interactive\HoldingsResult.cs" />
+    <Compile Include="Interactive\InteractiveLoginResult.cs" />
+    <Compile Include="Interactive\OrderTradeBase.cs" />
+    <Compile Include="MarketData\BroadcastMode.cs" />
+    <Compile Include="MarketData\OHLCBase.cs" />
+    <Compile Include="MarketData\PublishFormat.cs" />
+    <Compile Include="ResultBase.cs" />
+    <Compile Include="Interactive\XTSInteractive.cs" />
+    <Compile Include="Interactive\InteractiveEventArgs.cs" />
+    <Compile Include="Interactive\InteractiveMessageType.cs" />
+    <Compile Include="JsonEventArgs.cs" />
+    <Compile Include="LoginPayload.cs" />
+    <Compile Include="LoginResultBase.cs" />
+    <Compile Include="MarketData\Candle.cs" />
+    <Compile Include="MarketData\ClientConfigResult.cs" />
+    <Compile Include="MarketData\Indices.cs" />
+    <Compile Include="MarketData\Instruments.cs" />
+    <Compile Include="Interactive\ModifyOrderPayload.cs" />
+    <Compile Include="Interactive\CoverOrderPayload.cs" />
+    <Compile Include="Interactive\OrderPayload.cs" />
+    <Compile Include="Interactive\OrderIdResult.cs" />
+    <Compile Include="Interactive\OrderResult.cs" />
+    <Compile Include="MarketData\ListQuotesBase.cs" />
+    <Compile Include="MarketData\MarketDataEventArgs.cs" />
+    <Compile Include="MarketData\MarketDataLoginResult.cs" />
+    <Compile Include="MarketData\MarketDataPayload.cs" />
+    <Compile Include="MarketData\marketDataPorts.cs" />
+    <Compile Include="MarketData\OI.cs" />
+    <Compile Include="MarketData\QuotePayload.cs" />
+    <Compile Include="MarketData\MarketDepth.cs" />
+    <Compile Include="MarketData\QuotesResult.cs" />
+    <Compile Include="MarketData\SeachPayload.cs" />
+    <Compile Include="MarketData\SearchBase.cs" />
+    <Compile Include="MarketData\SearchByIdResult.cs" />
+    <Compile Include="MarketData\SearchByStringResult.cs" />
+    <Compile Include="MarketData\SubscriptionPayload.cs" />
+    <Compile Include="MarketData\TouchLine.cs" />
+    <Compile Include="MarketData\UnsubscriptionResult.cs" />
+    <Compile Include="HttpMethodType.cs" />
+    <Compile Include="MarketData\XTSMarketData.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Payload.cs" />
+    <Compile Include="Interactive\PositionConvertPayload.cs" />
+    <Compile Include="Interactive\PositionResult.cs" />
+    <Compile Include="Interactive\ProfileResult.cs" />
+    <Compile Include="MarketData\Url.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="Interactive\SquareoffPayload.cs" />
+    <Compile Include="Interactive\TradeResult.cs" />
+    <Compile Include="Interactive\Url.cs" />
+    <Compile Include="XTSBase.cs" />
+    <Compile Include="ConnectionEventArgs.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
