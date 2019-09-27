@@ -68,7 +68,7 @@ if (marketDataLogin != null)
 
 And subscribe to a quotes like:
 ```csharp
-await marketData.SubscribeAsync<T>(USER_ID, ((int)MarketDataPorts).ToString(), new Instruments() 
+await marketData.SubscribeAsync<T>(USER_ID, "1502", new Instruments() 
 {
   exchangeSegment = (int)ExchangeSegment.NSEFO;
   exchangeInstrumentID = 2885;
