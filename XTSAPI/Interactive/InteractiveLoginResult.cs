@@ -34,6 +34,15 @@ namespace XTSAPI.Interactive
         /// </summary>
         [DataMember(Name = "clientCodes")]
         public List<string> clientCodes { get; set; }
+
+
+        /// <summary>
+        /// Gets the exchange segment array
+        /// </summary>
+        [DataMember(Name = "exchangeSegmentArray")]
+        public List<KeyValuePair<string, string>> exchangeSegmentArray { get; set; }
+
+        
     }
 
     [DataContract]
@@ -61,7 +70,7 @@ namespace XTSAPI.Interactive
 
         /// <summary>
         /// Gets or sets the position square off mode
-        /// <see cref="PositionSquareOffMode"/>
+        /// <see cref="PositionMode"/>
         /// </summary>
         [DataMember(Name = "positionSqureOffMode")]
         public List<string> positionSqureOffMode { get; set; }
@@ -81,10 +90,23 @@ namespace XTSAPI.Interactive
         public List<string> dayOrNet { get; set; }
 
         /// <summary>
-        /// Gets or sets the exchange privilages
+        /// Gets or sets the exchange privileges
         /// </summary>
         [DataMember(Name = "exchangeInfo")]
         public Dictionary<string, ExchangeInfo> exchangeInfo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the instrument types
+        /// </summary>
+        [DataMember(Name = "instrumentType")]
+        public List<string> instrumentType { get; set; }
+        
+        /// <summary>
+        /// Gets the exchagnes
+        /// </summary>
+        [DataMember(Name = "exchangeSegment")]
+        public List<string> exchangeSegment { get; set; }
+
 
     }
 

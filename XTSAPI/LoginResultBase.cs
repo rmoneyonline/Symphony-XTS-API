@@ -22,5 +22,17 @@ namespace XTSAPI
         /// </summary>
         [DataMember(Name = "token")]
         public string token { get; set; }
+
+        /// <summary>
+        /// Gets or sets the userId
+        /// </summary>
+        [DataMember(Name = "userID")]
+        public string userID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the app version
+        /// </summary>
+        [DataMember(Name = "appVersion")]
+        public string appVersion { get; set; }
     }
 }

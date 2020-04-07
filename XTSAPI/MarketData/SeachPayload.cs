@@ -15,12 +15,19 @@ using System.Threading.Tasks;
 namespace XTSAPI.MarketData
 {
     [DataContract]
-    public class SeachByIdPayload : MarketDataPayload
+    public class SeachByIdPayload : Payload
     {
         /// <summary>
         /// Gets or sets the instruments
         /// </summary>
         [DataMember(Name = "instruments")]
         public List<Instruments> instruments { get; set; }
+
+        /// <summary>
+        /// Gets or sets the source
+        /// <see cref="OrderSource"/>
+        /// </summary>
+        [DataMember(Name = "source")]
+        public string source { get; set; } = OrderSource.WebAPI;
     }
 }

@@ -90,7 +90,7 @@ namespace XTSAPI
         public static readonly string SELL = "SELL";
     }
 
-    public static class PositionSquareOffMode
+    public static class PositionMode
     {
         /// <summary>
         /// Gets the DayWise position square off mode

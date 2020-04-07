@@ -72,13 +72,8 @@ namespace XTSAPI
         /// </summary>
         protected Socket Socket { get; set; } = null;
 
-        public XTSBase(string userId, string baseAddress)
+        public XTSBase(string baseAddress)
         {
-
-            this.UserId = userId;
-            if (string.IsNullOrWhiteSpace(this.UserId))
-                return;
-
             if (Uri.TryCreate(baseAddress, UriKind.Absolute, out Uri result))
             {
                 string authority = result.GetLeftPart(UriPartial.Authority);
@@ -151,6 +146,22 @@ namespace XTSAPI
             return true;
         }
 
+        /// <summary>
+        /// Log out from the session
+        /// </summary>
+        /// <param name="url">Url</param>
+        /// <returns></returns>
+        public virtual async Task LogoutAsync(string url)
+        {
+            this.Socket?.Disconnect();
+
+            await Query<Response<string>>(HttpMethodType.DELETE, url).ConfigureAwait(false);
+
+            this.HttpClient.Dispose();
+            this.HttpClient = null;
+        }
+
+
         private bool isConnectedToSocket = false;
         /// <summary>
         /// Gets if connected to the Socket
@@ -206,7 +217,7 @@ namespace XTSAPI
         /// <summary>
         /// Gets the userId
         /// </summary>
-        public string UserId { get; private set; }
+        public string UserId { get; protected set; }
 
 
         /// <summary>
@@ -408,7 +419,7 @@ namespace XTSAPI
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync(XTSAPI.MarketData.Url.InstrumentDump(), payload.GetHttpContent()).ConfigureAwait(false);
+                    HttpResponseMessage response = await client.PostAsync(XTSAPI.MarketData.Url.Master(), payload.GetHttpContent()).ConfigureAwait(false);
 
                     string txt = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 

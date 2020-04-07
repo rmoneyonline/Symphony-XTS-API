@@ -12,23 +12,27 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XTSAPI.MarketData
+namespace XTSAPI.Interactive
 {
     [DataContract]
-    public class MarketDataPayload : Payload
+    public class MarketStatus
     {
-        /// <summary>
-        /// Gets or sets the source
-        /// <see cref="OrderSource"/>
-        /// </summary>
-        [DataMember(Name = "source")]
-        public string source { get; set; } = OrderSource.WebAPI;
+        [DataMember(Name = "marketStatus")]
+        public List<MarketStatusItem> marketStatus { get; set; }
 
-        /// <summary>
-        /// Gets or sets the user id
-        /// </summary>
-        [DataMember(Name = "userID")]
-        public string userID { get; set; }
 
+    }
+
+    [DataContract]
+    public class MarketStatusItem
+    {
+        [DataMember(Name = "exchangeSegment")]
+        public string exchangeSegment { get; set; }
+
+        [DataMember(Name = "exchangeMarketType")]
+        public string exchangeMarketType { get; set; }
+
+        [DataMember(Name = "exchangeTradingSession")]
+        public string exchangeTradingSession { get; set; }
     }
 }

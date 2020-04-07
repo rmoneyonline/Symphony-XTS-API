@@ -26,8 +26,14 @@ namespace XTSAPI.MarketData
         /// <summary>
         /// Gets or sets the market data ports
         /// </summary>
-        [DataMember(Name = "marketDataPorts")]
-        public Dictionary<string, string> marketDataPorts { get; set; }
+        [DataMember(Name = "xtsMessageCode")]
+        public Dictionary<string, string> xtsMessageCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the instrument types
+        /// </summary>
+        [DataMember(Name = "instrumentType")]
+        public Dictionary<string, string> instrumentType { get; set; }
 
         /// <summary>
         /// Gets or sets the publish format

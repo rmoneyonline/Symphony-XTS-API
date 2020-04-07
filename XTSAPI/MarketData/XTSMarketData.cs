@@ -19,30 +19,18 @@ namespace XTSAPI.MarketData
     public class XTSMarketData : XTSBase
     {
 
-        public XTSMarketData(string userId, string baseAddress)
-            : base(userId, baseAddress)
+        public XTSMarketData(string baseAddress)
+            : base(baseAddress)
         { }
            
 
         
-        /// <summary>
-        /// Login to the XTS Market Data API
-        /// </summary>
-        /// <typeparam name="T"><see cref="MarketDataLoginResult"/></typeparam>
-        /// <param name="password">Password</param>
-        /// <param name="publicKey">Public Key</param>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public override async Task<T> LoginAsync<T>(string password, string publicKey, string source = "WebAPI")
+        public override async Task<T> LoginAsync<T>(string appKey, string secretKey, string source = "WebAPI")
         {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
             var payload = new LoginPayload()
             {
-                userID = base.UserId,
-                password = password,
-                publicKey = publicKey,
+                appKey = appKey,
+                secretKey = secretKey,
                 source = source
             };
 
@@ -52,7 +40,8 @@ namespace XTSAPI.MarketData
             {
                 this.HttpClient.DefaultRequestHeaders.Add("authorization", response.token);
                 this.Token = response.token;
-                
+                this.UserId = response.userID;
+
                 return response;
             }
             else
@@ -225,63 +214,25 @@ namespace XTSAPI.MarketData
             
         }
 
-
-
-        /// <summary>
-        /// Logout of the socket and close the http client
-        /// </summary>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public async Task LogoutAsync(string source = "WebAPI")
-        {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return;
-
-            MarketDataPayload payload = new MarketDataPayload()
-            {
-                userID = base.UserId,
-                source = source
-            };
-
-            this.Socket?.Disconnect();
-
-            await Query<Response<string>>(HttpMethodType.POST, Url.Logout(), payload: payload).ConfigureAwait(false);
-
-            this.HttpClient.Dispose();
-            this.HttpClient = null;
-        }
-
-
+        
         /// <summary>
         /// Returns the client config
         /// </summary>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
         /// <returns></returns>
-        public async Task<ClientConfigResult> GetConfigAsync(string source = "WebAPI")
+        public async Task<ClientConfigResult> GetConfigAsync()
         {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
-            MarketDataPayload payload = new MarketDataPayload()
-            { 
-                userID = base.UserId,
-                source = source
-            };
-
-            return await Query<ClientConfigResult>(HttpMethodType.POST, Url.ClientConfig(), payload: payload).ConfigureAwait(false);
+            return await Query<ClientConfigResult>(HttpMethodType.GET, Url.ClientConfig()).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Search string
         /// </summary>
         /// <param name="searchString">String to search</param>
-        /// <param name="userId">User id</param>
         /// <param name="source">Source <see cref="OrderSource"/> </param>
         /// <returns></returns>
-        public async Task<SearchByStringResult[]> SearchByStringAsync(string searchString, string userId = "guest", string source = "WEB")
+        public async Task<SearchByStringResult[]> SearchByStringAsync(string searchString, string source = "WEB")
         {
-
-            return await Query<SearchByStringResult[]>(HttpMethodType.GET, Url.SearchByString(searchString, userId: userId, source: source)).ConfigureAwait(false);
+            return await Query<SearchByStringResult[]>(HttpMethodType.GET, Url.SearchByString(searchString,source: source)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -298,7 +249,6 @@ namespace XTSAPI.MarketData
             SeachByIdPayload payload = new SeachByIdPayload()
             {
                 instruments = instruments,
-                userID = base.UserId,
                 source = source
             };
 
@@ -321,16 +271,13 @@ namespace XTSAPI.MarketData
         /// <param name="publishFormat">Publish format <see cref="PublishFormat"/></param>
         /// <param name="source">Source = <see cref="OrderSource"/></param>
         /// <returns></returns>
-        public async Task<QuoteResult<T>> GetQuotesAsync<T>(string clientId,  string marketDataPorts, List<Instruments> instruments, string source = "WebAPI") where T : ListQuotesBase
+        public async Task<QuoteResult<T>> GetQuotesAsync<T>(string clientId,  int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
         {
             QuotePayload payload = new QuotePayload()
             {
-                clientID = clientId,
-                userID = base.UserId,
                 instruments = instruments,
-                marketDataPort = marketDataPorts,
-                publishFormat = PublishFormat.JSON.ToString(),
-                source = source
+                xtsMessageCode = xtsMessageCode,
+                publishFormat = PublishFormat.JSON.ToString()
             };
 
             return await GetQuotesAsync<T>(HttpMethodType.POST, Url.Quotes(), payload).ConfigureAwait(false);
@@ -345,19 +292,12 @@ namespace XTSAPI.MarketData
         /// <param name="instruments">Instrument</param>
         /// <param name="source">Source <see cref="OrderSource"/></param>
         /// <returns></returns>
-        public async Task<QuoteResult<T>> SubscribeAsync<T>(string clientId, string marketDataPort, List<Instruments> instruments, 
-            string source = "WebAPI") where T : ListQuotesBase
+        public async Task<QuoteResult<T>> SubscribeAsync<T>(string clientId, int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
         {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
             SubscriptionPayload payload = new SubscriptionPayload()
             {
-                userID = base.UserId,
-                clientID = clientId,
                 instruments = instruments,
-                marketDataPort = marketDataPort,
-                source = source
+                xtsMessageCode = xtsMessageCode
             };
 
             return await GetQuotesAsync<T>(HttpMethodType.POST, Url.Subscription(), payload).ConfigureAwait(false);
@@ -371,22 +311,59 @@ namespace XTSAPI.MarketData
         /// <param name="instruments">Instruments</param>
         /// <param name="source">Source <see cref="OrderSource"/></param>
         /// <returns></returns>
-        public async Task<UnsubscriptionResult> UnsubscribeAsync(string clientId, string marketDataPort, List<Instruments> instruments, string source = "WebAPI")
+        public async Task<UnsubscriptionResult> UnsubscribeAsync(string clientId, int xtsMessageCode, List<Instruments> instruments)
         {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
             SubscriptionPayload payload = new SubscriptionPayload()
             {
-                userID = base.UserId,
-                clientID = clientId,
                 instruments = instruments,
-                marketDataPort = marketDataPort,
-                source = source
+                xtsMessageCode = xtsMessageCode
             };
 
             return await Query<UnsubscriptionResult>(HttpMethodType.PUT, Url.Subscription(), payload: payload).ConfigureAwait(false);
         }
+
+
+        public async Task<string> GetOHLCHistoryAsync(ExchangeSegment exchangeSegment, long exchangeInstrumentId, DateTime startTime, DateTime endTime, int dataType)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.OHLCHistory(exchangeSegment, exchangeInstrumentId, startTime, endTime, dataType)).ConfigureAwait(false);
+        }
+
+
+        public async Task<IndexList> GetIndexListAsync(ExchangeSegment exchangeSegment)
+        {
+            return await Query<IndexList>(HttpMethodType.GET, Url.IndexList(exchangeSegment)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetSeriesAsync(ExchangeSegment exchangeSegment)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.Series(exchangeSegment)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetEquitySymbolAsync(ExchangeSegment exchangeSegment, string symbol)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.EquitySymbol(exchangeSegment, symbol)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetFuturesSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.FuturesSymbol(exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetExpiryDateAsync(ExchangeSegment exchangeSegment, string series, string symbol)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.ExpiryDate(exchangeSegment, series, symbol)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetOptionSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate, string optionType, double strikePrice)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.OptionSymbol(exchangeSegment, series, symbol, expiryDate, optionType, strikePrice)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetOptionTypeAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
+        {
+            return await Query<string>(HttpMethodType.GET, Url.OptionType(exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
+        }
+
 
 
 

@@ -15,14 +15,9 @@ using System.Threading.Tasks;
 namespace XTSAPI.MarketData
 {
     [DataContract]
-    public class SubscriptionPayload : MarketDataPayload
+    public class SubscriptionPayload : Payload
     {
-        /// <summary>
-        /// Gets or sets the client id
-        /// </summary>
-        [DataMember(Name = "clientID")]
-        public string clientID { get; set; }
-
+       
         /// <summary>
         /// Gets or sets the instruments
         /// </summary>
@@ -30,12 +25,11 @@ namespace XTSAPI.MarketData
         public List<Instruments> instruments { get; set; }
 
         /// <summary>
-        /// Gets or sets the market data ports
-        /// <see cref="XTSAPI.MarketData.MarketDataPorts"/>
+        /// Gets or sets the message code
         /// </summary>
-        [DataMember(Name = "marketDataPort")]
-        public string marketDataPort { get; set; }
-        
+        [DataMember(Name = "xtsMessageCode")]
+        public int xtsMessageCode { get; set; }
+
     }
 
         

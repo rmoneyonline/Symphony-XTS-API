@@ -183,5 +183,11 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "OrderLegStatus")]
         public string OrderLegStatus { get; set; }
 
-            }
+        /// <summary>
+        /// Gets or sets if is spread order or not
+        /// </summary>
+        [DataMember(Name = "IsSpread")]
+        public bool IsSpread { get; set; }
+
+    }
 }

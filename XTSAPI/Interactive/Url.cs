@@ -104,7 +104,7 @@ namespace XTSAPI.Interactive
         /// </summary>
         /// <param name="dayOrNet">Day or net</param>
         /// <returns></returns>
-        public static string Positions(string dayOrNet = "day")
+        public static string Positions(string dayOrNet = "NetWise")
         {
             return $"interactive/portfolio/positions?dayOrNet={dayOrNet}";
         }
@@ -125,6 +125,16 @@ namespace XTSAPI.Interactive
         public static string SquareOff()
         {
             return $"/interactive/portfolio/squareoff";
+        }
+
+        public static string MarketStatus(string userId)
+        {
+            return $"interactive/status/exchange?userID={userId}";
+        }
+
+        public static string Message(string exchange)
+        {
+            return $"interactive/messages/exchange?exchangeSegment={exchange}";
         }
     }
 }

@@ -107,7 +107,18 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "IsConvertToInvestorClient")]
         public bool IsConvertToInvestorClient { get; set; }
 
-        
+        /// <summary>
+        /// Gets or sets the last activity date
+        /// </summary>
+        [DataMember(Name = "LastActivityDate")]
+        public DateTime LastActivityDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets if active in database
+        /// </summary>
+        [DataMember(Name = "IsToActivateInDB")]
+        public bool IsToActivateInDB { get; set; }
+
 
     }
 
@@ -468,6 +479,17 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "IPAddress")]
         public string IPAddress { get; set; }
 
+        /// <summary>
+        /// Gets or sets the round off preference
+        /// </summary>
+        [DataMember(Name = "RoundOffPreference")]
+        public double RoundOffPreference { get; set; }
+
+        /// <summary>
+        /// Gets or sets if login password can be reset manually
+        /// </summary>
+        [DataMember(Name = "ManualLoginPasswordReset")]
+        public bool ManualLoginPasswordReset { get; set; }
 
 
     }   

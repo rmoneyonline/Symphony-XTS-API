@@ -18,8 +18,8 @@ namespace XTSAPI.Interactive
 {
     public class XTSInteractive : XTSBase
     {
-        public XTSInteractive(string userId, string baseAddress)
-            : base(userId, baseAddress)
+        public XTSInteractive(string baseAddress)
+            : base(baseAddress)
         { }
 
 
@@ -31,16 +31,12 @@ namespace XTSAPI.Interactive
         /// <param name="publicKey">Public key</param>
         /// <param name="source">Source <see cref="OrderSource"/></param>
         /// <returns></returns>
-        public override async Task<T> LoginAsync<T>(string password, string publicKey, string source = "WebAPI")
+        public override async Task<T> LoginAsync<T>(string appKey, string secretKey, string source = "WebAPI")
         {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
             var payload = new LoginPayload()
             {
-                userID = base.UserId,
-                password = password,
-                publicKey = publicKey,
+                appKey = appKey,
+                secretKey = secretKey,
                 source = source
             };
 
@@ -50,6 +46,7 @@ namespace XTSAPI.Interactive
             {
                 this.HttpClient.DefaultRequestHeaders.Add("authorization", response.token);
                 this.Token = response.token;
+                this.UserId = response.userID;
 
                 return response;
             }
@@ -82,7 +79,8 @@ namespace XTSAPI.Interactive
             {
                 IgnoreServerCertificateValidation = true,
                 Path = "/interactive/socket.io",
-                Query = new Dictionary<string, string>() { { "token", this.Token }, { "userID", base.UserId } }
+
+                Query = new Dictionary<string, string>() { { "token", this.Token }, { "userID", base.UserId }, { "apiType", "INTERACTIVE" } }
             };
 
             this.Socket = IO.Socket(httpClient.BaseAddress, options);
@@ -105,26 +103,13 @@ namespace XTSAPI.Interactive
 
             this.Socket.On("position", (position) =>
             {
-                OnPostback<PositionResult>(InteractiveMessageType.Position, position);
+                OnPostback<PositionEvent>(InteractiveMessageType.Position, position);
             });
 
             return true;
         }
 
-        /// <summary>
-        /// Logout from the interactive host
-        /// </summary>
-        /// <returns></returns>
-        public async Task LogoutAsync()
-        {
-            this.Socket?.Disconnect();
-
-            await Query<Response<string>>(HttpMethodType.DELETE, Url.Session()).ConfigureAwait(false);
-
-            this.HttpClient.Dispose();
-            this.HttpClient = null;
-
-        }
+        
 
         /// <summary>
         /// Get the user profile
@@ -133,6 +118,19 @@ namespace XTSAPI.Interactive
         public async Task<ProfileResult> GetProfileAsync()
         {
             return await Query<ProfileResult>(HttpMethodType.GET, Url.Profile()).ConfigureAwait(false);
+        }
+
+        public async Task<MarketStatus> GetMarketStatusAsync()
+        {
+            if (string.IsNullOrEmpty(this.UserId))
+                return null;
+
+            return await Query<MarketStatus>(HttpMethodType.GET, Url.MarketStatus(this.UserId)).ConfigureAwait(false);
+        }
+
+        public async Task<MessageList> GetExchangeMessagesAsync(string exchange = "NSECM")
+        {
+            return await Query<MessageList>(HttpMethodType.GET, Url.Message(exchange)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,39 +152,56 @@ namespace XTSAPI.Interactive
         }
 
         /// <summary>
+        /// Gets the order history
+        /// </summary>
+        /// <param name="appOrderId">App order id</param>
+        /// <returns></returns>
+        public async Task<OrderResult[]> GetOrderAsync(long appOrderId)
+        {
+            return await Query<OrderResult[]>(HttpMethodType.GET, Url.Order(appOrderId)).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Get the 'day' position book
         /// </summary>
         /// <returns></returns>
-        public async Task<PositionResult[]> GetDayPositionAsync()
+        public async Task<PositionList> GetDayPositionAsync()
         {
-            return await Query<PositionResult[]>(HttpMethodType.GET, Url.Positions()).ConfigureAwait(false);
+            return await Query<PositionList>(HttpMethodType.GET, Url.Positions(PositionMode.DayWise)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get the 'net' position book
         /// </summary>
         /// <returns></returns>
-        public async Task<PositionResult[]> GetNetPositionAsync()
+        public async Task<PositionList> GetNetPositionAsync()
         {
-            return await Query<PositionResult[]>(HttpMethodType.GET, Url.Positions("net")).ConfigureAwait(false);
+            return await Query<PositionList>(HttpMethodType.GET, Url.Positions()).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Convert position
+        /// Converts the product type of a position
         /// </summary>
-        /// <param name="payload">Payload</param>
+        /// <param name="exchangeSegment">Exchange</param>
+        /// <param name="exchangeInstrumentID">Instrument id</param>
+        /// <param name="oldProductType">Old product type</param>
+        /// <param name="newProductType">New product type</param>
+        /// <param name="targetQty">Target quantity</param>
+        /// <param name="isDayWise">Is say wise</param>
         /// <returns></returns>
-        public async Task ConvertPositionAsync(long executionId, long appOrderId, string oldProductType, string newProductType)
+        public async Task<PositionConvertResult> ConvertPositionAsync(string exchangeSegment, long exchangeInstrumentID, string oldProductType, string newProductType, int targetQty, bool isDayWise)
         {
             PositionConvertPayload payload = new PositionConvertPayload()
             {
-                appOrderID = appOrderId,
-                executionID = executionId,
                 oldProductType = oldProductType,
-                newProductType = newProductType
+                newProductType = newProductType,
+                exchangeSegment = exchangeSegment,
+                exchangeInstrumentID = exchangeInstrumentID,
+                targetQty = targetQty,
+                isDayWise = isDayWise
             };
 
-            await Query<object>(HttpMethodType.PUT, Url.PositionConvert(), payload: payload).ConfigureAwait(false);
+            return await Query<PositionConvertResult>(HttpMethodType.PUT, Url.PositionConvert(), payload: payload).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -372,7 +387,7 @@ namespace XTSAPI.Interactive
         /// <param name="positionSquareOffQtyType">Position square off quantity type</param>
         /// <returns></returns>
         public async Task SquareOff(string exchangeSegment, long exchangeInstrumentId, string productType, string squareOffMode,
-            int squareOffQtyValue, string positionSquareOffQtyType)
+            int squareOffQtyValue, string positionSquareOffQtyType, bool blockOrderSending = false, bool cancelOrders = false)
         {
             SquareoffPayload payload = new SquareoffPayload()
             {
@@ -381,7 +396,9 @@ namespace XTSAPI.Interactive
                 productType = productType,
                 squareoffMode = squareOffMode,
                 squareOffQtyValue = squareOffQtyValue,
-                positionSquareOffQuantityType = positionSquareOffQtyType
+                positionSquareOffQuantityType = positionSquareOffQtyType,
+                blockOrderSending = blockOrderSending,
+                cancelOrders = cancelOrders
             };
 
             await SquareOff(payload).ConfigureAwait(false);

@@ -40,6 +40,7 @@
                     </Grid.RowDefinitions>
 
                     <Button Grid.Row="0" Content="{Binding ConnectStr}" Click="Button_Connect" Margin="5"  />
+                    <Button Grid.Row="0" Grid.Column="1" Content="Get market status" Margin="5" Click="Button_MarketStatus" />
                     <Button Grid.Row="0" Grid.Column="2" Content="Get Profile" Margin="5" Click="Profile_Click" />
                     
                     <Button Grid.Row="1"  Click="Orders_Click"  Content="Get Orders" Margin="5"  />
@@ -60,6 +61,8 @@
 
                     <Button Grid.Row="5" Content="Sqare Off" Click="Button_SquareOff" Margin="5" />
                     <Button Grid.Row="5" Grid.Column="1" Content="Convert Position" Click="Button_ConvertPosition" Margin="5" />
+
+                    <Button Grid.Row="5" Grid.Column="2" Content="Get order history" Click="OrderHistory_Click" Margin="5" />
 
 
                 </Grid>
@@ -84,7 +87,7 @@
                     <TextBox Grid.ColumnSpan="3" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
                     <Button Grid.Row="1" Content="{Binding ConnectMarketData}" Click="Button_ConnectMarketData" Margin="5" />
-                    <Button Grid.Row="2" Content="Get Congig" Click="Button_Config" Margin="5" />
+                    <Button Grid.Row="2" Content="Get Config" Click="Button_Config" Margin="5" />
                     <Button Grid.Row="2" Grid.Column="1" Content="Search by String" Click="Button_SearchByString" Margin="5" />
                     <Button Grid.Row="2" Grid.Column="2" Content="Search by Id" Click="Button_SearchById" Margin="5" />
 
@@ -93,7 +96,10 @@
                     <Button Grid.Row="4" Content="Get Quotes" Click="Button_Quotes" Margin="5" />
                     <Button Grid.Row="4" Grid.Column="1" Content="Subscribe RT" Click="Button_SubscribeRT" Margin="5" />
                     <Button Grid.Row="4" Grid.Column="2" Content="Unsubscribe RT" Click="Button_Unsubscribe" Margin="5" />
-                    
+
+                    <Button Grid.Row="5" Content="Get History" Click="Button_GetHistory" Margin="5" />
+                    <Button Grid.Row="5" Grid.Column="1" Content="Index list" Click="Button_IndexList" Margin="5" />
+
                 </Grid>
             </TabItem>
         </TabControl>

@@ -12,29 +12,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XTSAPI
+namespace XTSAPI.MarketData
 {
     [DataContract]
-    public class LoginPayload : Payload
+    public class IndexList
     {
+        [DataMember(Name = "exchangeSegment")]
+        public int exchangeSegment { get; set; }
 
-        /// <summary>
-        /// Gets or sets the user id
-        /// </summary>
-        [DataMember(Name = "secretKey")]
-        public string secretKey { get; set; }
+        [DataMember(Name = "indexListArray")]
+        public List<string> indexListArray { get; set; }
 
-        /// <summary>
-        /// Gets or sets the password
-        /// </summary>
-        [DataMember(Name = "appKey")]
-        public string appKey { get; set; }
-
-        
-        /// <summary>
-        /// Gets or sets the source
-        /// </summary>
-        [DataMember(Name = "source")]
-        public string source { get; set; } = OrderSource.WebAPI;
     }
 }

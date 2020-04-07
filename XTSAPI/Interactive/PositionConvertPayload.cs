@@ -18,30 +18,42 @@ namespace XTSAPI.Interactive
     public class PositionConvertPayload : Payload
     {
         /// <summary>
-        /// Gets or sets the app order id
-        /// </summary>
-        [DataMember(Name = "appOrderID")]
-        public long appOrderID { get; set; }
-
-        /// <summary>
-        /// Gets or sets the execution id
-        /// </summary>
-        [DataMember(Name = "executionID")]
-        public long executionID { get; set; }
-
-        /// <summary>
         /// Gets or sets the old product type
-        /// <see cref="ProductType"/>
         /// </summary>
         [DataMember(Name = "oldProductType")]
         public string oldProductType { get; set; }
 
         /// <summary>
         /// Gets or sets the new product type
-        /// <see cref="ProductType"/>
         /// </summary>
         [DataMember(Name = "newProductType")]
         public string newProductType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the app order id
+        /// </summary>
+        [DataMember(Name = "exchangeInstrumentID")]
+        public long exchangeInstrumentID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the execution id
+        /// </summary>
+        [DataMember(Name = "exchangeSegment")]
+        public string exchangeSegment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the old product type
+        /// <see cref="ProductType"/>
+        /// </summary>
+        [DataMember(Name = "targetQty")]
+        public int targetQty { get; set; }
+
+        /// <summary>
+        /// Gets or sets the new product type
+        /// <see cref="ProductType"/>
+        /// </summary>
+        [DataMember(Name = "isDayWise")]
+        public bool isDayWise { get; set; }
     }
 }
 

@@ -70,12 +70,18 @@
     <Compile Include="InstrumentDumpPayload.cs" />
     <Compile Include="Interactive\BalanceResult.cs" />
     <Compile Include="Interactive\CoverOrderResult.cs" />
+    <Compile Include="Interactive\MessageList.cs" />
+    <Compile Include="Interactive\MarketStatus.cs" />
+    <Compile Include="Interactive\PositionConvertResult.cs" />
+    <Compile Include="Interactive\PositionEvent.cs" />
+    <Compile Include="Interactive\PositionList.cs" />
     <Compile Include="Interactive\ProfileBase.cs" />
     <Compile Include="Interactive\ExitCoverOrderPayload.cs" />
     <Compile Include="Interactive\HoldingsResult.cs" />
     <Compile Include="Interactive\InteractiveLoginResult.cs" />
     <Compile Include="Interactive\OrderTradeBase.cs" />
     <Compile Include="MarketData\BroadcastMode.cs" />
+    <Compile Include="MarketData\IndexList.cs" />
     <Compile Include="MarketData\OHLCBase.cs" />
     <Compile Include="MarketData\PublishFormat.cs" />
     <Compile Include="ResultBase.cs" />
@@ -97,7 +103,6 @@
     <Compile Include="MarketData\ListQuotesBase.cs" />
     <Compile Include="MarketData\MarketDataEventArgs.cs" />
     <Compile Include="MarketData\MarketDataLoginResult.cs" />
-    <Compile Include="MarketData\MarketDataPayload.cs" />
     <Compile Include="MarketData\marketDataPorts.cs" />
     <Compile Include="MarketData\OI.cs" />
     <Compile Include="MarketData\QuotePayload.cs" />

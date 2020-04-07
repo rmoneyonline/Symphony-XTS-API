@@ -29,6 +29,12 @@ namespace XTSAPI.MarketData
         [DataMember(Name = "unsubList")]
         public List<UnsubList> unsubList { get; set; }
 
+        /// <summary>
+        /// Gets or sets teh xts message code
+        /// </summary>
+        [DataMember(Name = "xtsMessageCode")]
+        public int xtsMessageCode { get; set; }
+
     }
 
     [DataContract]

@@ -36,16 +36,22 @@ namespace TestApp
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        
+
         /*
          *  Please enter your login credentials here 
         */
-        const string URL = "url";
-        const string USER_ID = "userId";
-        const string PASSWORD = "password";
-        const string MARKET_KEY = "marketKey";
-        const string INTERACTIVE_KEY = "interactiveKey";
         
+        
+
+        const string URL = "url";
+        const string USER_ID = "USER_ID";
+
+        const string MARKET_APPKEY = "market_api";
+        const string MARKET_SECRET = "market_secret";
+
+        const string TRADING_APPKEY = "trading_api";
+        const string TRADING_SECRET = "trading_secret";
+
 
         public MainWindow()
         {
@@ -101,7 +107,7 @@ namespace TestApp
 
         public MarketDataPorts MarketDataPorts { get; set; } = MarketDataPorts.marketDepthEvent;
 
-        //StreamWriter writer = new StreamWriter("Logs.txt", true);
+        StreamWriter writer = new StreamWriter("Logs.txt", true);
 
         private void Log(string msg, [CallerMemberName]string methodName = null)
         {
@@ -112,8 +118,8 @@ namespace TestApp
             {
                 this.Logs.Add($"{methodName}: {msg}");
 
-                //writer?.WriteLine($"{DateTime.Now} : {msg}");
-                //writer?.Flush();
+                writer?.WriteLine($"{DateTime.Now} : {msg}");
+                writer?.Flush();
 
             }
             else
@@ -143,13 +149,13 @@ namespace TestApp
                 }
 
 
-                this.interactive = new XTSInteractive(USER_ID, URL);
+                this.interactive = new XTSInteractive(URL);
                 this.interactive.Interactive += OnInteractive;
                 this.interactive.Json += OnJson;
                 this.interactive.Exception += OnException;
                 this.interactive.ConnectionState += OnConnection;
                 ;
-                InteractiveLoginResult login = await interactive.LoginAsync<InteractiveLoginResult>(PASSWORD, INTERACTIVE_KEY);
+                InteractiveLoginResult login = await interactive.LoginAsync<InteractiveLoginResult>(TRADING_APPKEY, TRADING_SECRET);
 
                 if (login != null)
                 {
@@ -167,13 +173,21 @@ namespace TestApp
                 {
                     return;
                 }
-                await Task.Run(() => this.interactive.LogoutAsync());
+                await Task.Run(() => this.interactive.LogoutAsync(XTSAPI.Interactive.Url.Session()));
 
                 this.ConnectStr = connect;
             }
         }
 
-        
+        private async void Button_MarketStatus(object sender, RoutedEventArgs e)
+        {
+            if (this.interactive == null)
+                return;
+
+            await this.interactive.GetMarketStatusAsync();
+        }
+
+
 
 
         private async void Profile_Click(object sender, RoutedEventArgs e)
@@ -243,7 +257,8 @@ namespace TestApp
         private async void Button_Buy(object sender, RoutedEventArgs e)
         {
 
-            this.orderId = await this.interactive?.PlaceOrderAsync("NSECM", 2885, "BUY", "LIMIT", 1, 1100.0d, 0.0d, "MIS", "DAY", orderUniqueIdentifier: GenerateOrderTag());
+            this.orderId = await this.interactive?.PlaceOrderAsync("NSECM", 2885
+                , "BUY", "LIMIT", 1, 910.0d, 0.0d, "MIS", "DAY", orderUniqueIdentifier: GenerateOrderTag());
         }
 
         private async void Button_Modify(object sender, RoutedEventArgs e)
@@ -251,7 +266,7 @@ namespace TestApp
             if (this.orderId == null)
                 return;
 
-            var modify = await this.interactive?.ModifyOrderAsync(this.orderId.AppOrderID, "LIMIT", 1, 1101.0d, 0.0d, "MIS", "DAY", orderUniqueIdentifier: GenerateOrderTag());
+            var modify = await this.interactive?.ModifyOrderAsync(this.orderId.AppOrderID, "LIMIT", 1, 920.0, 0.0d, "MIS", "DAY", orderUniqueIdentifier: GenerateOrderTag());
         }
 
         private async void Button_Cancel(object sender, RoutedEventArgs e)
@@ -276,8 +291,19 @@ namespace TestApp
 
         private async void Button_PlaceCO(object sender, RoutedEventArgs e)
         {
+            CoverOrderPayload payload = new CoverOrderPayload()
+            {
+                disclosedQuantity = 0,
+                exchangeSegment = "NSECM",
+                exchangeInstrumentID = 2885,
+                limitPrice = 1200,
+                stopPrice = 1190,
+                orderQuantity = 1,
+                orderSide = "SELL",
+                orderUniqueIdentifier = GenerateOrderTag()
+            };
 
-            var co = await this.interactive?.PlaceCoverOrderAsync("NSECM", 2885, "BUY", 1, 1000.0d, 0.0d, orderUniqueIdentifier: GenerateOrderTag());
+            var co = await this.interactive?.PlaceCoverOrderAsync(payload);
 
         }
 
@@ -299,12 +325,16 @@ namespace TestApp
 
         private async void Button_SquareOff(object sender, RoutedEventArgs e)
         {
-            PositionResult[] positions = await this.interactive?.GetDayPositionAsync();
-            if (positions == null || positions.Length == 0)
+            PositionList positions = await this.interactive?.GetDayPositionAsync();
+            if (positions == null || positions.positionList.Length == 0)
                 return;
 
-            await this.interactive?.SquareOff(positions[0].ExchangeSegment, positions[0].ExchangeInstrumentID, positions[0].ProductType,
-                PositionSquareOffMode.DayWise, 100, PositionSquareOffQuantityType.Percentage);
+
+            if (!long.TryParse(positions.positionList[0].ExchangeInstrumentID, out long instrumentId))
+                return;
+
+            await this.interactive?.SquareOff(positions.positionList[0].ExchangeSegment, instrumentId, positions.positionList[0].ProductType,
+                PositionMode.DayWise, 100, PositionSquareOffQuantityType.Percentage);
         }
 
         private async void Button_ConvertPosition(object sender, RoutedEventArgs e)
@@ -313,7 +343,13 @@ namespace TestApp
             if (trades == null || trades.Length == 0)
                 return;
 
-            await this.interactive?.ConvertPositionAsync(trades[0].ExecutionID, trades[0].AppOrderID, "MIS", "CNC");
+            await this.interactive?.ConvertPositionAsync(trades[0].ExchangeSegment, trades[0].ExchangeInstrumentID, trades[0].ProductType, trades[0].ProductType == "MIS" ? "CNC" : "MIS", trades[0].CumulativeQuantity, false);
+        }
+
+        private async void OrderHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var history = await this.interactive?.GetOrderAsync(3401190656);
+
         }
 
         #endregion
@@ -337,13 +373,13 @@ namespace TestApp
                 }
 
 
-                this.marketData = new XTSMarketData(USER_ID, URL);
+                this.marketData = new XTSMarketData(URL);
                 this.marketData.MarketData += OnMarketData;
                 this.marketData.ConnectionState += OnConnection;
                 this.marketData.Json += OnJson;
                 this.marketData.Exception += OnException;
 
-                this.marketDataLogin = await this.marketData.LoginAsync<MarketDataLoginResult>(PASSWORD, MARKET_KEY);
+                this.marketDataLogin = await this.marketData.LoginAsync<MarketDataLoginResult>(MARKET_APPKEY, MARKET_SECRET);
                 
                 if (this.marketDataLogin != null)
                 {
@@ -357,7 +393,7 @@ namespace TestApp
             {
                 await Task.Run(async () =>
                     {
-                        await this.marketData?.LogoutAsync();
+                        await this.marketData?.LogoutAsync(XTSAPI.MarketData.Url.Logout());
                     });
 
 
@@ -399,11 +435,11 @@ namespace TestApp
             if (this.MarketDataPorts == MarketDataPorts.openInterestEvent)
             {
                 exchange = (int)ExchangeSegment.NSEFO;
-                exchangeInstrumentId = 44461; //nifty sep 19 fut
+                exchangeInstrumentId = 45042; //nifty sep 19 fut
             }
             else if (this.MarketDataPorts == MarketDataPorts.indexDataEvent)
             {
-                exchangeInstrumentId = 0;
+                exchangeInstrumentId = 1;
             }
 
             return new List<Instruments>()
@@ -462,12 +498,12 @@ namespace TestApp
             if (this.marketData == null)
                 return null;
 
-            return await this.marketData.SubscribeAsync<T>(USER_ID, ((int)MarketDataPorts).ToString(), GetInstruments(this.MarketDataPorts)).ConfigureAwait(false);
+            return await this.marketData.SubscribeAsync<T>(USER_ID, ((int)MarketDataPorts), GetInstruments(this.MarketDataPorts)).ConfigureAwait(false);
         } 
 
         private async void Button_Unsubscribe(object sender, RoutedEventArgs e)
         {
-            UnsubscriptionResult response = await this.marketData?.UnsubscribeAsync(USER_ID, ((int)this.MarketDataPorts).ToString(), GetInstruments(this.MarketDataPorts));
+            UnsubscriptionResult response = await this.marketData?.UnsubscribeAsync(USER_ID, ((int)this.MarketDataPorts), GetInstruments(this.MarketDataPorts));
         }
 
 
@@ -513,9 +549,37 @@ namespace TestApp
             if (this.marketData == null)
                 return null;
 
-            return await this.marketData.GetQuotesAsync<T>(USER_ID, ((int)this.MarketDataPorts).ToString(), GetInstruments(this.MarketDataPorts)).ConfigureAwait(false);
+            return await this.marketData.GetQuotesAsync<T>(USER_ID, ((int)this.MarketDataPorts), GetInstruments(this.MarketDataPorts)).ConfigureAwait(false);
         }
 
+
+        private async void Button_GetHistory(object sender, RoutedEventArgs e)
+        {
+            /*
+            {"type":"error","code":"e-app-001","description":"Bad Request","result":{"status":400,"statusText":"Bad Request",
+            "errors":[{"field":["startTime"],"location":"query","messages":["\"startTime\" is required"],"types":["any.required"]},{"field":["endTime"],
+            "location":"query","messages":["\"endTime\" is required"],"types":["any.required"]},{"field":["fromDate"],"location":"query",
+            "messages":["\"fromDate\" is not allowed"],"types":["object.allowUnknown"]},{"field":["toDate"],"location":"query",
+            "messages":["\"toDate\" is not allowed"],"types":["object.allowUnknown"]},{"field":["compressionType"],"location":"query",
+            "messages":["\"compressionType\" is not allowed"],"types":["object.allowUnknown"]},{"field":["source"],"location":"query",
+            "messages":["\"source\" is not allowed"],"types":["object.allowUnknown"]}]}}
+            */
+
+            if (this.marketData == null)
+                return;
+
+            var result = await this.marketData.GetOHLCHistoryAsync(ExchangeSegment.NSECM, 22, DateTime.Now.Date.AddDays(-1), DateTime.Now, 60);
+            
+
+        }
+
+        private async void Button_IndexList(object sender, RoutedEventArgs e)
+        {
+            if (this.marketData == null)
+                return;
+
+            var result = await this.marketData.GetEquitySymbolAsync(ExchangeSegment.NSECM, "ACC");
+        }
 
 
         private async void Button_InstrumentDump(object sender, RoutedEventArgs e)
@@ -537,6 +601,8 @@ namespace TestApp
             Log(XTSBase.IsDownloadingInstrumentDump.ToString());
             
         }
+
+        
 
         #endregion
 
@@ -567,7 +633,11 @@ namespace TestApp
             Log($"==> {e.SourceData}");
         }
 
+
+
+
         #endregion
 
+        
     }
 }

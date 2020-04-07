@@ -12,29 +12,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XTSAPI
+namespace XTSAPI.Interactive
 {
     [DataContract]
-    public class LoginPayload : Payload
+    public class PositionList
     {
-
         /// <summary>
-        /// Gets or sets the user id
+        /// Gets or sets the position list
         /// </summary>
-        [DataMember(Name = "secretKey")]
-        public string secretKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the password
-        /// </summary>
-        [DataMember(Name = "appKey")]
-        public string appKey { get; set; }
-
-        
-        /// <summary>
-        /// Gets or sets the source
-        /// </summary>
-        [DataMember(Name = "source")]
-        public string source { get; set; } = OrderSource.WebAPI;
+        [DataMember(Name = "positionList")]
+        public PositionResult[] positionList { get; set; }
     }
 }

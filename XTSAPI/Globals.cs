@@ -37,6 +37,19 @@ namespace XTSAPI
 
         }
 
+        public static long FromDateTime(DateTime dateTime, int exchangeSegment)
+        {
+            switch (exchangeSegment)
+            {
+                case 1:
+                case 2:
+                case 3:
+                    return (long)dateTime.Subtract(new DateTime(1980, 1, 1)).TotalSeconds;
+                default:
+                    return (long)dateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            }
+        }
+
 
         public static int GetExchangeFromString(string exchangeSegment)
         {

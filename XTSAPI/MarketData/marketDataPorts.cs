@@ -166,7 +166,11 @@ namespace XTSAPI.MarketData
         /// </summary>
         instrumentSubscriptionInfo = 5505,
         /// <summary>
-        /// Level III events
+        /// Level III 30 depth picture
+        /// </summary>
+        marketDepthEvent30 = 5014,
+        /// <summary>
+        /// Level III 100 depth picture
         /// </summary>
         marketDepthEvent100 = 5018
     }

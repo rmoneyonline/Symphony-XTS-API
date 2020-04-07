@@ -36,6 +36,8 @@ namespace XTSAPI.MarketData
         [DataMember(Name = "listQuotes")]
         public List<string> listQuotes { get; set; }
 
+        
+
     }
 
     [DataContract]
@@ -59,6 +61,12 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "listQuotes")]
         public List<T> listQuotes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the remaining subscription count
+        /// </summary>
+        [DataMember(Name = "Remaining_Subscription_Count")]
+        public int Remaining_Subscription_Count { get; set; }
 
     }
 

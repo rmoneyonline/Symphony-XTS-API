@@ -54,5 +54,17 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "squareOffQtyValue")]
         public int squareOffQtyValue { get; set; }
 
+        /// <summary>
+        /// Gets or sets if orders are cancelled
+        /// </summary>
+        [DataMember(Name = "cancelOrders")]
+        public bool cancelOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets if order sending is blocked
+        /// </summary>
+        [DataMember(Name = "blockOrderSending")]
+        public bool blockOrderSending { get; set; }
+
     }
 }

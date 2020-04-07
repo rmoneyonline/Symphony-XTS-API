@@ -92,7 +92,7 @@ namespace XTSAPI.MarketData
         /// Gets or sets the total value traded
         /// </summary>
         [DataMember(Name = "TotalValueTraded")]
-        public double TotalValueTraded { get; set; }
+        public double? TotalValueTraded { get; set; }
 
         /// <summary>
         /// Gets or sets the buy back total buy

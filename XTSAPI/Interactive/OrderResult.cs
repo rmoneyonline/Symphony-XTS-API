@@ -22,5 +22,7 @@ namespace XTSAPI.Interactive
         /// </summary>
         [DataMember(Name = "OrderExpiryDate")]
         public DateTime OrderExpiryDate { get; set; }
+
+        
     }
 }
