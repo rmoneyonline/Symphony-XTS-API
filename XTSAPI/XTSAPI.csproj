@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XTSAPI</RootNamespace>
     <AssemblyName>XTSAPI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -69,9 +69,13 @@
     <Compile Include="Globals.cs" />
     <Compile Include="InstrumentDumpPayload.cs" />
     <Compile Include="Interactive\BalanceResult.cs" />
+    <Compile Include="Interactive\BracketOrderPayload.cs" />
+    <Compile Include="Interactive\BracketOrderPayloadBase.cs" />
+    <Compile Include="Interactive\BracketOrderResult.cs" />
     <Compile Include="Interactive\CoverOrderResult.cs" />
     <Compile Include="Interactive\MessageList.cs" />
     <Compile Include="Interactive\MarketStatus.cs" />
+    <Compile Include="Interactive\ModifyBOOrderPayload.cs" />
     <Compile Include="Interactive\PositionConvertResult.cs" />
     <Compile Include="Interactive\PositionEvent.cs" />
     <Compile Include="Interactive\PositionList.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="MarketData\BroadcastMode.cs" />
     <Compile Include="MarketData\IndexList.cs" />
     <Compile Include="MarketData\OHLCBase.cs" />
+    <Compile Include="MarketData\OHLCResult.cs" />
     <Compile Include="MarketData\PublishFormat.cs" />
     <Compile Include="ResultBase.cs" />
     <Compile Include="Interactive\XTSInteractive.cs" />

@@ -25,6 +25,30 @@ namespace XTSAPI.MarketData
         public int XTSMarketType { get; set; }
 
         /// <summary>
+        /// Gets or sets the underlying instrument id
+        /// </summary>
+        [DataMember(Name = "UnderlyingInstrumentID")]
+        public long UnderlyingInstrumentID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the underlying exchange segment
+        /// </summary>
+        [DataMember(Name = "UnderlyingExchangeSegment")]
+        public int UnderlyingExchangeSegment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the underlying index name
+        /// </summary>
+        [DataMember(Name = "UnderlyingIDIndexName")]
+        public string UnderlyingIDIndexName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the underlying total open interest
+        /// </summary>
+        [DataMember(Name = "UnderlyingTotalOpenInterest")]
+        public long UnderlyingTotalOpenInterest { get; set; }
+
+        /// <summary>
         /// Gets or sets the open interest
         /// </summary>
         [DataMember(Name = "OpenInterest")]

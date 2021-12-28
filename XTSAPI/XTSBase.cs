@@ -72,18 +72,32 @@ namespace XTSAPI
         /// </summary>
         protected Socket Socket { get; set; } = null;
 
+        /// <summary>
+        /// Gets the Uri Path and query
+        /// </summary>
+        protected string PathAndQuery { get; private set; }
+
         public XTSBase(string baseAddress)
         {
             if (Uri.TryCreate(baseAddress, UriKind.Absolute, out Uri result))
             {
                 string authority = result.GetLeftPart(UriPartial.Authority);
 
+                if (!string.IsNullOrWhiteSpace(result.PathAndQuery) && result.PathAndQuery.Length > 1)
+                {
+                    this.PathAndQuery = result.PathAndQuery;
+                    if (this.PathAndQuery.Length > 1 && this.PathAndQuery.EndsWith("/"))
+                    {
+                        this.PathAndQuery = this.PathAndQuery.Substring(0, this.PathAndQuery.Length - 1);
+                    }
+                }
+
                 this.HttpClient = new HttpClient();
                 this.HttpClient.BaseAddress = new Uri(authority);
                 this.HttpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             }
         }
-
+        
         /// <summary>
         /// Login to the XTS API
         /// </summary>
@@ -146,20 +160,13 @@ namespace XTSAPI
             return true;
         }
 
+
+        
         /// <summary>
-        /// Log out from the session
+        /// Logs out of the XTS API
         /// </summary>
-        /// <param name="url">Url</param>
         /// <returns></returns>
-        public virtual async Task LogoutAsync(string url)
-        {
-            this.Socket?.Disconnect();
-
-            await Query<Response<string>>(HttpMethodType.DELETE, url).ConfigureAwait(false);
-
-            this.HttpClient.Dispose();
-            this.HttpClient = null;
-        }
+        public abstract Task LogoutAsync();
 
 
         private bool isConnectedToSocket = false;
@@ -377,9 +384,10 @@ namespace XTSAPI
         /// Gets the instrument dump. This will run on an independent httpclient
         /// </summary>
         /// <param name="exchanges">Exchanges for which the instruments will be downloaded</param>
-        /// <param name="filePath">FilePath, if defined will save hte json response in the defined file</param>
+        /// <param name="masterDataPath">Master data path</param>
+        /// <param name="filePath">FilePath, if defined will save the json response in the defined file</param>
         /// <returns></returns>
-        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(List<string> exchanges, string filePath = null)
+        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(List<string> exchanges, string filePath = null, string pathAndQuery = null)
         {
             if (exchanges == null || exchanges.Count == 0)
                 return null;
@@ -389,16 +397,17 @@ namespace XTSAPI
                 exchangeSegmentList = exchanges
             };
 
-            return await DownloadInstrumentDumpAsync(payload, filePath: filePath).ConfigureAwait(false);
+            return await DownloadInstrumentDumpAsync(payload, filePath: filePath, pathAndQuery: pathAndQuery).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Gets the instrument dump. This will run on an independent httpclient
         /// </summary>
         /// <param name="payload">Instrument dump payload <see cref="InstrumentDumpPayload"/></param>
+        /// <param name="masterDataPath">Market data path</param>
         /// <param name="filePath">FilePath, if defined will save the json response in the defile file</param>
         /// <returns></returns>
-        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(InstrumentDumpPayload payload, string filePath = null)
+        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(InstrumentDumpPayload payload, string filePath = null, string pathAndQuery = null)
         {
             if (payload == null || payload.exchangeSegmentList == null || payload.exchangeSegmentList.Count == 0)
                 return null;
@@ -406,6 +415,14 @@ namespace XTSAPI
             if (this.HttpClient == null || this.HttpClient.BaseAddress == null)
                 return null;
 
+            if (!string.IsNullOrEmpty(pathAndQuery) && pathAndQuery.Length > 1)
+            {
+                if (pathAndQuery.EndsWith("/"))
+                {
+                    pathAndQuery = pathAndQuery.Substring(0, pathAndQuery.Length - 1);
+                }
+            }
+            
             if (IsDownloadingInstrumentDump)
                 return null;
 
@@ -419,7 +436,7 @@ namespace XTSAPI
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync(XTSAPI.MarketData.Url.Master(), payload.GetHttpContent()).ConfigureAwait(false);
+                    HttpResponseMessage response = await client.PostAsync($"{(string.IsNullOrWhiteSpace(pathAndQuery) ? this.PathAndQuery : pathAndQuery)}/instruments/master", payload.GetHttpContent()).ConfigureAwait(false);
 
                     string txt = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 

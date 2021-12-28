@@ -29,5 +29,8 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "source")]
         public string source { get; set; } = OrderSource.WebAPI;
+
+        [DataMember(Name = "isTradeSymbol")]
+        public bool isTradeSymbol { get; set; }
     }
 }

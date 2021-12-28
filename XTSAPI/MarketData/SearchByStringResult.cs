@@ -149,11 +149,15 @@ namespace XTSAPI.MarketData
 
             this.LotSize = lotSize;
 
-            if (len < 14)
-                return true;
+            
 
+            
+            if (len < 15)
+                return true;
+            /*
             if (len < 16)
                 return false;
+            */
 
             //|UNDERLYING_INSTRUMENT_ID|UNDERLYING_INDEX_NAME|EXPIRY_DATE|STRIKE_PRICE|OPTION_TYPE
 
@@ -165,20 +169,21 @@ namespace XTSAPI.MarketData
             DateTime.TryParse(array[15], CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime expiryDate);
             this.ContractExpiration = expiryDate;
 
-            if (len < 17)
+            if (len < 18)
                 return true;
 
-            if (len < 18)
-                return false;
+            if (double.TryParse(array[len - 2], NumberStyles.Any, CultureInfo.InvariantCulture, out double strikePrice))
+            {
+                this.StrikePrice = strikePrice;
+            }
+            else return false;
 
-            double.TryParse(array[16], NumberStyles.Any, CultureInfo.InvariantCulture, out double strikePrice);
-            this.StrikePrice = strikePrice;
-
-            int.TryParse(array[17], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionType);
-            this.OptionType = optionType;
-
-
-            return true;
+            if (int.TryParse(array[len - 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionType))
+            {
+                this.OptionType = optionType;
+                return true;
+            }
+            return false;
 
         }
     }

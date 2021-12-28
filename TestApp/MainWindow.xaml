@@ -36,6 +36,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
@@ -59,10 +60,13 @@
                     <Button Grid.Row="4" Grid.Column="1" Content="Modify CO" Click="Button_ModifyCO" Margin="5" />
                     <Button Grid.Row="4" Grid.Column="2" Content="Exit CO" Click="Button_ExitCO" Margin="5" />
 
-                    <Button Grid.Row="5" Content="Sqare Off" Click="Button_SquareOff" Margin="5" />
-                    <Button Grid.Row="5" Grid.Column="1" Content="Convert Position" Click="Button_ConvertPosition" Margin="5" />
+                    <Button Grid.Row="5" Margin="5" Content="Place BO" Click="Button_PlaceBO" />
+                    <Button Grid.Row="5" Grid.Column="1" Content="Modify BO" Margin="5" Click="Button_ModifyBO" />
+                    <Button Grid.Row="5" Grid.Column="2" Content="Exit BO" Margin="5" Click="Button_ExitBO" />
 
-                    <Button Grid.Row="5" Grid.Column="2" Content="Get order history" Click="OrderHistory_Click" Margin="5" />
+                    <Button Grid.Row="6" Content="Sqare Off" Click="Button_SquareOff" Margin="5" />
+                    <Button Grid.Row="6" Grid.Column="1" Content="Convert Position" Click="Button_ConvertPosition" Margin="5" />
+                    <Button Grid.Row="6" Grid.Column="2" Content="Get order history" Click="OrderHistory_Click" Margin="5" />
 
 
                 </Grid>

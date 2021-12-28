@@ -8,6 +8,7 @@
 using Quobject.SocketIoClientDotNet.Client;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -34,7 +35,7 @@ namespace XTSAPI.MarketData
                 source = source
             };
 
-            T response = await Query<T>(HttpMethodType.POST, Url.Login(), payload: payload).ConfigureAwait(false);
+            T response = await Query<T>(HttpMethodType.POST, $"{base.PathAndQuery}/auth/login", payload: payload).ConfigureAwait(false);
 
             if (response != null && !string.IsNullOrEmpty(response.token))
             {
@@ -69,7 +70,11 @@ namespace XTSAPI.MarketData
             if (string.IsNullOrEmpty(this.Token))
                 return false;
 
+            
             if (string.IsNullOrWhiteSpace(base.UserId))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(this.PathAndQuery))
                 return false;
 
             HttpClient httpClient = this.HttpClient;
@@ -81,7 +86,7 @@ namespace XTSAPI.MarketData
             Quobject.SocketIoClientDotNet.Client.IO.Options options = new Quobject.SocketIoClientDotNet.Client.IO.Options()
             {
                 IgnoreServerCertificateValidation = true,
-                Path = "/marketdata/socket.io",
+                Path = $"{this.PathAndQuery}/socket.io",
                 Query = new Dictionary<string, string>()
                     {
                         { "token", this.Token },
@@ -167,15 +172,179 @@ namespace XTSAPI.MarketData
             {
                 OnJsonData(MarketDataPorts.instrumentSubscriptionInfo, data);
             });
+            */
 
-            this.Socket.On($"5018-{publishFormat}", (data) =>
+            /*
+            this.Socket.On($"5018-{format}-{mode}", (data) =>
             {
-                OnJsonData(MarketDataPorts.marketDepthEvent100, data);
+                OnJson(null, data.ToString());
             });
             */
 
             return true;
         }
+
+
+        public override async Task LogoutAsync()
+        {
+            this.Socket?.Disconnect();
+
+            await Query<Response<string>>(HttpMethodType.DELETE, $"{this.PathAndQuery}/auth/logout").ConfigureAwait(false);
+
+            this.HttpClient?.Dispose();
+            this.HttpClient = null;
+        }
+
+        /// <summary>
+        /// Returns the client config
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ClientConfigResult> GetConfigAsync()
+        {
+            return await Query<ClientConfigResult>(HttpMethodType.GET, $"{this.PathAndQuery}/config/clientConfig").ConfigureAwait(false);
+        }
+
+
+        private async Task<QuoteResult<T>> GetQuotesAsync<T>(HttpMethodType methodType, string url, Payload payload) where T : ListQuotesBase
+        {
+            return await Query<QuoteResult<T>>(methodType, url, payload: payload).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get quotes
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="xtsMessageCode">Market data port <see cref="MarketDataPorts"/></param>
+        /// <param name="instruments">Instruments</param>
+        /// <returns></returns>
+        public async Task<QuoteResult<T>> GetQuotesAsync<T>(int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
+        {
+            QuotePayload payload = new QuotePayload()
+            {
+                instruments = instruments,
+                xtsMessageCode = xtsMessageCode,
+                publishFormat = PublishFormat.JSON.ToString()
+            };
+
+            return await GetQuotesAsync<T>(HttpMethodType.POST, $"{this.PathAndQuery}/instruments/quotes", payload).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Subscribe to quotes stream
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="xtsMessageCode">Market data port <see cref="MarketDataPorts"/></param>
+        /// <param name="instruments">Instrument</param>
+        /// <returns></returns>
+        public async Task<QuoteResult<T>> SubscribeAsync<T>(int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
+        {
+            SubscriptionPayload payload = new SubscriptionPayload()
+            {
+                instruments = instruments,
+                xtsMessageCode = xtsMessageCode
+            };
+
+            return await GetQuotesAsync<T>(HttpMethodType.POST, $"{this.PathAndQuery}/instruments/subscription", payload).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Unsubscribe from a quotes stream
+        /// </summary>
+        /// <param name="xtsMessageCode">Market data port <see cref="MarketDataPorts"/></param>
+        /// <param name="instruments">Instruments</param>
+        /// <returns></returns>
+        public async Task<UnsubscriptionResult> UnsubscribeAsync(int xtsMessageCode, List<Instruments> instruments)
+        {
+            SubscriptionPayload payload = new SubscriptionPayload()
+            {
+                instruments = instruments,
+                xtsMessageCode = xtsMessageCode
+            };
+
+            return await Query<UnsubscriptionResult>(HttpMethodType.PUT, $"{this.PathAndQuery}/instruments/subscription", payload: payload).ConfigureAwait(false);
+        }
+
+
+        public async Task<string> GetSeriesAsync(ExchangeSegment exchangeSegment)
+        {
+            return await Query<string>(HttpMethodType.GET, $"{this.PathAndQuery}/instruments/instrument/series?exchangeSegment={(int)exchangeSegment}").ConfigureAwait(false);
+        }
+
+        public async Task<string> GetEquitySymbolAsync(ExchangeSegment exchangeSegment, string symbol)
+        {
+            return await Query<string>(HttpMethodType.GET, $"{this.PathAndQuery}/instruments/instrument/symbol?exchangeSegment={(int)exchangeSegment}&series=EQ&symbol={symbol}").ConfigureAwait(false);
+        }
+
+
+        public async Task<string> GetExpiryDateAsync(ExchangeSegment exchangeSegment, string series, string symbol)
+        {
+            return await Query<string>(HttpMethodType.GET, $"{this.PathAndQuery}/instruments/instrument/expiryDate?exchangeSegment={(int)exchangeSegment}&series={series}&symbol={symbol}").ConfigureAwait(false);
+        }
+
+        public async Task<string> GetFuturesSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
+        {
+            return await Query<string>(HttpMethodType.GET, string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}/instruments/instrument/futureSymbol?exchangeSegment={1}&series={2}&symbol={3}&expiryDate={4:ddMMMyyyy}", this.PathAndQuery, (int)exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetOptionSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate, string optionType, double strikePrice)
+        {
+            return await Query<string>(HttpMethodType.GET, string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}/instruments/instrument/optionSymbol?exchangeSegment={1}&series={2}&symbol={3}&expiryDate={4:ddMMMyyyy}&optionType={5}&strikePrice={6}",
+                this.PathAndQuery, (int)exchangeSegment, series, symbol, expiryDate, optionType, strikePrice)).ConfigureAwait(false);
+        }
+
+        public async Task<string> GetOptionTypeAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
+        {
+            return await Query<string>(HttpMethodType.GET, string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}/instruments/instrument/optionType?exchangeSegment={1}&series={2}&symbol={3}&expiryDate={4:ddMMMyyyy}",
+                this.PathAndQuery, (int)exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
+        }
+
+
+        public async Task<IndexList> GetIndexListAsync(ExchangeSegment exchangeSegment)
+        {
+            return await Query<IndexList>(HttpMethodType.GET, $"{this.PathAndQuery}/instruments/indexlist/?exchangeSegment={(int)exchangeSegment}").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Search instrument by id
+        /// </summary>
+        /// <param name="instruments">Instruments</param>
+        /// <param name="source">Source <see cref="OrderSource"/></param>
+        /// <returns></returns>
+        public async Task<SearchByIdResult[]> SearchByIdAsync(List<Instruments> instruments, string source = "WebAPI", bool isTradeSymbol = false)
+        {
+
+            SeachByIdPayload payload = new SeachByIdPayload()
+            {
+                instruments = instruments,
+                source = source,
+                isTradeSymbol = isTradeSymbol
+            };
+
+            return await Query<SearchByIdResult[]>(HttpMethodType.POST, $"{this.PathAndQuery}/search/instrumentsbyid", payload: payload).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Search string
+        /// </summary>
+        /// <param name="searchString">String to search</param>
+        /// <param name="source">Source <see cref="OrderSource"/> </param>
+        /// <returns></returns>
+        public async Task<SearchByStringResult[]> SearchByStringAsync(string searchString, string source = "WEB")
+        {
+            return await Query<SearchByStringResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/search/instruments/?searchString={searchString}&source={source}").ConfigureAwait(false);
+        }
+
+
+        public async Task<OHLCResult> GetOHLCHistoryAsync(ExchangeSegment exchangeSegment, long exchangeInstrumentId, DateTime startTime, DateTime endTime, int compressionValue)
+        {
+            return await Query<OHLCResult>(HttpMethodType.GET, string.Format(CultureInfo.InvariantCulture, "{0}/instruments/ohlc?exchangeSegment={1}&exchangeInstrumentID={2}&startTime={3:MMM dd yyyy HHmmss}&endTime={4:MMM dd yyyy HHmmss}&compressionValue={5}",
+                this.PathAndQuery, exchangeSegment.ToString(), exchangeInstrumentId, startTime, endTime, compressionValue)).ConfigureAwait(false);
+        }
+
+
+
+
 
 
 
@@ -213,158 +382,6 @@ namespace XTSAPI.MarketData
             }
             
         }
-
-        
-        /// <summary>
-        /// Returns the client config
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ClientConfigResult> GetConfigAsync()
-        {
-            return await Query<ClientConfigResult>(HttpMethodType.GET, Url.ClientConfig()).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Search string
-        /// </summary>
-        /// <param name="searchString">String to search</param>
-        /// <param name="source">Source <see cref="OrderSource"/> </param>
-        /// <returns></returns>
-        public async Task<SearchByStringResult[]> SearchByStringAsync(string searchString, string source = "WEB")
-        {
-            return await Query<SearchByStringResult[]>(HttpMethodType.GET, Url.SearchByString(searchString,source: source)).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Search instrument by id
-        /// </summary>
-        /// <param name="instruments">Instruments</param>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public async Task<SearchByIdResult[]> SearchByIdAsync(List<Instruments> instruments, string source = "WebAPI")
-        {
-            if (string.IsNullOrWhiteSpace(base.UserId))
-                return null;
-
-            SeachByIdPayload payload = new SeachByIdPayload()
-            {
-                instruments = instruments,
-                source = source
-            };
-
-            return await Query<SearchByIdResult[]>(HttpMethodType.POST, Url.SearchInstrumentsById(), payload: payload).ConfigureAwait(false);
-        }
-    
-        
-        private async Task<QuoteResult<T>> GetQuotesAsync<T>(HttpMethodType methodType, string url, Payload payload) where T : ListQuotesBase
-        {
-            return await Query<QuoteResult<T>>(methodType, url, payload: payload).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Get quotes
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="clientId">Clietn id</param>
-        /// <param name="marketDataPorts">Market data port <see cref="MarketDataPorts"/></param>
-        /// <param name="instruments">Instruments</param>
-        /// <param name="publishFormat">Publish format <see cref="PublishFormat"/></param>
-        /// <param name="source">Source = <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public async Task<QuoteResult<T>> GetQuotesAsync<T>(string clientId,  int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
-        {
-            QuotePayload payload = new QuotePayload()
-            {
-                instruments = instruments,
-                xtsMessageCode = xtsMessageCode,
-                publishFormat = PublishFormat.JSON.ToString()
-            };
-
-            return await GetQuotesAsync<T>(HttpMethodType.POST, Url.Quotes(), payload).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Subscribe to quotes stream
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="clientId">Client id</param>
-        /// <param name="marketDataPort">Market data port <see cref="MarketDataPorts"/></param>
-        /// <param name="instruments">Instrument</param>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public async Task<QuoteResult<T>> SubscribeAsync<T>(string clientId, int xtsMessageCode, List<Instruments> instruments) where T : ListQuotesBase
-        {
-            SubscriptionPayload payload = new SubscriptionPayload()
-            {
-                instruments = instruments,
-                xtsMessageCode = xtsMessageCode
-            };
-
-            return await GetQuotesAsync<T>(HttpMethodType.POST, Url.Subscription(), payload).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Unsubscribe from a quotes stream
-        /// </summary>
-        /// <param name="clientId">Client id</param>
-        /// <param name="marketDataPort">Market data port <see cref="MarketDataPorts"/></param>
-        /// <param name="instruments">Instruments</param>
-        /// <param name="source">Source <see cref="OrderSource"/></param>
-        /// <returns></returns>
-        public async Task<UnsubscriptionResult> UnsubscribeAsync(string clientId, int xtsMessageCode, List<Instruments> instruments)
-        {
-            SubscriptionPayload payload = new SubscriptionPayload()
-            {
-                instruments = instruments,
-                xtsMessageCode = xtsMessageCode
-            };
-
-            return await Query<UnsubscriptionResult>(HttpMethodType.PUT, Url.Subscription(), payload: payload).ConfigureAwait(false);
-        }
-
-
-        public async Task<string> GetOHLCHistoryAsync(ExchangeSegment exchangeSegment, long exchangeInstrumentId, DateTime startTime, DateTime endTime, int dataType)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.OHLCHistory(exchangeSegment, exchangeInstrumentId, startTime, endTime, dataType)).ConfigureAwait(false);
-        }
-
-
-        public async Task<IndexList> GetIndexListAsync(ExchangeSegment exchangeSegment)
-        {
-            return await Query<IndexList>(HttpMethodType.GET, Url.IndexList(exchangeSegment)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetSeriesAsync(ExchangeSegment exchangeSegment)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.Series(exchangeSegment)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetEquitySymbolAsync(ExchangeSegment exchangeSegment, string symbol)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.EquitySymbol(exchangeSegment, symbol)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetFuturesSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.FuturesSymbol(exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetExpiryDateAsync(ExchangeSegment exchangeSegment, string series, string symbol)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.ExpiryDate(exchangeSegment, series, symbol)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetOptionSymbolAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate, string optionType, double strikePrice)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.OptionSymbol(exchangeSegment, series, symbol, expiryDate, optionType, strikePrice)).ConfigureAwait(false);
-        }
-
-        public async Task<string> GetOptionTypeAsync(ExchangeSegment exchangeSegment, string series, string symbol, DateTime expiryDate)
-        {
-            return await Query<string>(HttpMethodType.GET, Url.OptionType(exchangeSegment, series, symbol, expiryDate)).ConfigureAwait(false);
-        }
-
-
 
 
         private void OnMarketData(MarketDataPorts port, ListQuotesBase data, object sourceData)

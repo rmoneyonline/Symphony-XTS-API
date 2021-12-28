@@ -154,6 +154,17 @@ namespace XTSAPI.MarketData
         {
             switch (field)
             {
+                case "t":
+                    string[] array = value.Split('_');
+
+                    if (int.TryParse(array[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int exchange))
+                    {
+                        this.ExchangeSegment = exchange;
+                    }
+
+                    this.IndexName = array[1];
+
+                    break;
                 case "ltp":
                     if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out double indexValue))
                     {
@@ -209,7 +220,7 @@ namespace XTSAPI.MarketData
                     }
                     break;
                 default:
-                    base.Parse(field, value);
+                    //base.Parse(field, value);
                     break;
             }
         }

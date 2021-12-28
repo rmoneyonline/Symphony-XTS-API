@@ -45,6 +45,6 @@ namespace XTSAPI
         /// Gets or sets the sequence number
         /// </summary>
         [DataMember(Name = "SequenceNumber")]
-        public int SequenceNumber { get; set; }
+        public long SequenceNumber { get; set; }
     }
 }

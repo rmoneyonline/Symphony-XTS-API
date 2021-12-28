@@ -186,6 +186,14 @@ namespace XTSAPI
         /// </summary>
         NSECD = 3,
         /// <summary>
+        /// NSE Commodity
+        /// </summary>
+        NSECO = 4,
+        /// <summary>
+        ///Stock lending and borrowing 
+        /// </summary>
+        SLBM = 5,
+        /// <summary>
         /// BSE Cash
         /// </summary>
         BSECM = 11,
@@ -197,6 +205,10 @@ namespace XTSAPI
         /// BSE CDS
         /// </summary>
         BSECD = 13,
+        /// <summary>
+        /// BSE Commodity
+        /// </summary>
+        BSECO = 14,
         /// <summary>
         /// NCDEX
         /// </summary>

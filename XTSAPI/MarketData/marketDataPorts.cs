@@ -130,6 +130,10 @@ namespace XTSAPI.MarketData
     public enum MarketDataPorts
     {
         /// <summary>
+        /// Instrument change property event
+        /// </summary>
+        instrumentPropertyChangeEvent = 1105,
+        /// <summary>
         /// Level I vents
         /// </summary>
         touchlineEvent = 1501,
@@ -173,5 +177,7 @@ namespace XTSAPI.MarketData
         /// Level III 100 depth picture
         /// </summary>
         marketDepthEvent100 = 5018
+        
+
     }
 }

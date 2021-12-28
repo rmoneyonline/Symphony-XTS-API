@@ -40,7 +40,7 @@ namespace XTSAPI.Interactive
                 source = source
             };
 
-            T response = await Query<T>(HttpMethodType.POST, Url.Session(), payload: payload).ConfigureAwait(false);
+            T response = await Query<T>(HttpMethodType.POST, $"{this.PathAndQuery}/user/session", payload: payload).ConfigureAwait(false);
             
             if (response != null && !string.IsNullOrEmpty(response.token))
             {
@@ -69,6 +69,10 @@ namespace XTSAPI.Interactive
             if (string.IsNullOrWhiteSpace(base.UserId))
                 return false;
 
+            if (string.IsNullOrWhiteSpace(this.PathAndQuery))
+                return false;
+
+
             HttpClient httpClient = this.HttpClient;
 
             if (httpClient == null && httpClient.BaseAddress == null)
@@ -78,7 +82,7 @@ namespace XTSAPI.Interactive
             Quobject.SocketIoClientDotNet.Client.IO.Options options = new Quobject.SocketIoClientDotNet.Client.IO.Options()
             {
                 IgnoreServerCertificateValidation = true,
-                Path = "/interactive/socket.io",
+                Path = $"{this.PathAndQuery}/socket.io",
 
                 Query = new Dictionary<string, string>() { { "token", this.Token }, { "userID", base.UserId }, { "apiType", "INTERACTIVE" } }
             };
@@ -109,117 +113,34 @@ namespace XTSAPI.Interactive
             return true;
         }
 
-        
-
-        /// <summary>
-        /// Get the user profile
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ProfileResult> GetProfileAsync()
+        public override async Task LogoutAsync()
         {
-            return await Query<ProfileResult>(HttpMethodType.GET, Url.Profile()).ConfigureAwait(false);
-        }
+            this.Socket?.Disconnect();
 
-        public async Task<MarketStatus> GetMarketStatusAsync()
-        {
-            if (string.IsNullOrEmpty(this.UserId))
-                return null;
+            await Query<Response<string>>(HttpMethodType.DELETE, $"{this.PathAndQuery}/user/session").ConfigureAwait(false);
 
-            return await Query<MarketStatus>(HttpMethodType.GET, Url.MarketStatus(this.UserId)).ConfigureAwait(false);
-        }
-
-        public async Task<MessageList> GetExchangeMessagesAsync(string exchange = "NSECM")
-        {
-            return await Query<MessageList>(HttpMethodType.GET, Url.Message(exchange)).ConfigureAwait(false);
+            this.HttpClient?.Dispose();
+            this.HttpClient = null;
         }
 
         /// <summary>
-        /// Get the account summery
+        /// Gets the user profile
         /// </summary>
+        /// <param name="clientId">Client id</param>
         /// <returns></returns>
-        public async Task<BalanceResult> GetBalanceAsync()
+        public async Task<ProfileResult> GetProfileAsync(string clientId)
         {
-            return await Query<BalanceResult>(HttpMethodType.GET, Url.Balance()).ConfigureAwait(false);
+            return await Query<ProfileResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/profile?ClientID={clientId}").ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Get the order book
+        /// get the account balance
         /// </summary>
+        /// <param name="clientId">Client id</param>
         /// <returns></returns>
-        public async Task<OrderResult[]> GetOrderAsync()
+        public async Task<BalanceResult> GetBalanceAsync(string clientId)
         {
-            return await Query<OrderResult[]>(HttpMethodType.GET, Url.Order()).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Gets the order history
-        /// </summary>
-        /// <param name="appOrderId">App order id</param>
-        /// <returns></returns>
-        public async Task<OrderResult[]> GetOrderAsync(long appOrderId)
-        {
-            return await Query<OrderResult[]>(HttpMethodType.GET, Url.Order(appOrderId)).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Get the 'day' position book
-        /// </summary>
-        /// <returns></returns>
-        public async Task<PositionList> GetDayPositionAsync()
-        {
-            return await Query<PositionList>(HttpMethodType.GET, Url.Positions(PositionMode.DayWise)).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Get the 'net' position book
-        /// </summary>
-        /// <returns></returns>
-        public async Task<PositionList> GetNetPositionAsync()
-        {
-            return await Query<PositionList>(HttpMethodType.GET, Url.Positions()).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Converts the product type of a position
-        /// </summary>
-        /// <param name="exchangeSegment">Exchange</param>
-        /// <param name="exchangeInstrumentID">Instrument id</param>
-        /// <param name="oldProductType">Old product type</param>
-        /// <param name="newProductType">New product type</param>
-        /// <param name="targetQty">Target quantity</param>
-        /// <param name="isDayWise">Is say wise</param>
-        /// <returns></returns>
-        public async Task<PositionConvertResult> ConvertPositionAsync(string exchangeSegment, long exchangeInstrumentID, string oldProductType, string newProductType, int targetQty, bool isDayWise)
-        {
-            PositionConvertPayload payload = new PositionConvertPayload()
-            {
-                oldProductType = oldProductType,
-                newProductType = newProductType,
-                exchangeSegment = exchangeSegment,
-                exchangeInstrumentID = exchangeInstrumentID,
-                targetQty = targetQty,
-                isDayWise = isDayWise
-            };
-
-            return await Query<PositionConvertResult>(HttpMethodType.PUT, Url.PositionConvert(), payload: payload).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Get the trade book
-        /// </summary>
-        /// <returns></returns>
-        public async Task<TradeResult[]> GetTradesAsync()
-        {
-            return await Query<TradeResult[]>(HttpMethodType.GET, Url.Trade()).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Get the holding book
-        /// </summary>
-        /// <returns></returns>
-        public async Task<HoldingsResult> GetHoldingsAsync()
-        {
-            return await Query<HoldingsResult>(HttpMethodType.GET, Url.Holdings()).ConfigureAwait(false);
+            return await Query<BalanceResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/balance").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -265,7 +186,7 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<OrderIdResult> PlaceOrderAsync(OrderPayload payload)
         {
-            return await Query<OrderIdResult>(HttpMethodType.POST, Url.Order(), payload: payload).ConfigureAwait(false);
+            return await Query<OrderIdResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders", payload: payload).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -307,7 +228,7 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<OrderIdResult> ModifyOrderAsync(ModifyOrderPayload payload)
         {
-            return await Query<OrderIdResult>(HttpMethodType.PUT, Url.Order(), payload: payload).ConfigureAwait(false);
+            return await Query<OrderIdResult>(HttpMethodType.PUT, $"{this.PathAndQuery}/orders", payload: payload).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -315,9 +236,9 @@ namespace XTSAPI.Interactive
         /// </summary>
         /// <param name="appOrderID">App order id</param>
         /// <returns></returns>
-        public async Task<OrderIdResult> CancelOrderAsync(long appOrderID)
+        public async Task<OrderIdResult> CancelOrderAsync(long appOrderId)
         {
-            return await Query<OrderIdResult>(HttpMethodType.DELETE, Url.Order(appOrderID)).ConfigureAwait(false);
+            return await Query<OrderIdResult>(HttpMethodType.DELETE, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -332,7 +253,7 @@ namespace XTSAPI.Interactive
         /// <param name="disclosedQty">Disclosed quantity</param>
         /// <param name="orderUniqueIdentifier">Unique order identifier</param>
         /// <returns></returns>
-        public async Task<CoverOrderResult> PlaceCoverOrderAsync(string exchangeSegment, long exchangeInstrumentId, string orderSide,
+        public async Task<CoverOrderResult> PlaceCoverOrderAsync(string exchangeSegment, long exchangeInstrumentId, string orderSide, string orderType,
             int quantity, double limitPrice, double stopPrice, int disclosedQty = 0, string orderUniqueIdentifier = "123abc")
         {
             CoverOrderPayload payload = new CoverOrderPayload()
@@ -344,11 +265,13 @@ namespace XTSAPI.Interactive
                 stopPrice = stopPrice,
                 orderQuantity = quantity,
                 orderSide = orderSide,
+                orderType = orderType,
                 orderUniqueIdentifier = orderUniqueIdentifier
             };
 
             return await PlaceCoverOrderAsync(payload).ConfigureAwait(false);
         }
+
 
         /// <summary>
         /// Place a cover order
@@ -357,9 +280,10 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<CoverOrderResult> PlaceCoverOrderAsync(CoverOrderPayload payload)
         {
-            return await Query<CoverOrderResult>(HttpMethodType.POST, Url.CoverOrder(), payload: payload).ConfigureAwait(false);
+            return await Query<CoverOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/cover", payload: payload).ConfigureAwait(false);
         }
 
+        
         //TO DO
         /// <summary>
         /// Exit a cover order
@@ -373,8 +297,70 @@ namespace XTSAPI.Interactive
                 appOrderID = appOrderId
             };
 
-            await Query<object>(HttpMethodType.PUT, Url.CoverOrder(), payload: payload).ConfigureAwait(false);
+            await Query<object>(HttpMethodType.PUT, $"{this.PathAndQuery}/orders/cover", payload: payload).ConfigureAwait(false);
         }
+
+
+        public async Task<BracketOrderResult> PlaceBracketOrderAsync(string clientId, string exchangeSegment, long exchangeInstrumentID, string orderSide, string orderType, 
+            int quantity, double limitPrice, double stopPrice, int squareOff, int trailingStoploss = 0, int disclosedQuantity = 0, string orderUniqueIdentifier = "abc123")
+        {
+            var payload = new BracketOrderPayload()
+            {
+                clientID = clientId,
+                disclosedQuantity = disclosedQuantity,
+                exchangeInstrumentID = exchangeInstrumentID,
+                exchangeSegment = exchangeSegment,
+                limitPrice = limitPrice,
+                orderQuantity = quantity,
+                orderSide = orderSide,
+                orderType = orderType,
+                stopLossPrice = stopPrice,
+                squarOff = squareOff,
+                trailingStoploss = trailingStoploss,
+                orderUniqueIdentifier = orderUniqueIdentifier
+            };
+
+            return await PlaceBracketOrderAsync(payload).ConfigureAwait(false);
+
+        }
+
+        public async Task<BracketOrderResult> PlaceBracketOrderAsync(BracketOrderPayload payload)
+        {
+            if (payload == null)
+                return null;
+
+            return await Query<BracketOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/bracket", payload: payload).ConfigureAwait(false);
+        }
+
+
+        public async Task<OrderIdResult> ModifyBOOrderAsync(int appOrderId, int quantity, double limitPrice, double stopPrice)
+        {
+            var payload = new ModifyBOOrderPayload()
+            {
+                appOrderID = appOrderId,
+                orderQuantity = quantity,
+                limitPrice = limitPrice,
+                stopLossPrice = stopPrice
+            };
+
+
+            return await ModifyBOOrderAsync(payload).ConfigureAwait(false);
+        }
+
+        public async Task<OrderIdResult> ModifyBOOrderAsync(ModifyBOOrderPayload payload)
+        {
+            if (payload == null)
+                return null;
+
+            return await Query<OrderIdResult>(HttpMethodType.PUT, $"{this.PathAndQuery}/orders/bracket", payload: payload).ConfigureAwait(false);
+        }
+
+        public async Task<OrderIdResult> CancelBOOrderAsync(string clientId, long appOrderId)
+        {
+            return await Query<OrderIdResult>(HttpMethodType.DELETE, $"{this.PathAndQuery}/orders/bracket?appOrderID={appOrderId}&ClientId={clientId}").ConfigureAwait(false);
+        }
+
+        /*
 
         /// <summary>
         /// Square off 
@@ -415,6 +401,110 @@ namespace XTSAPI.Interactive
             await Query<object>(HttpMethodType.PUT, Url.SquareOff(), payload: payload).ConfigureAwait(false);
         }
 
+        */
+
+        /// <summary>
+        /// Get the order book
+        /// </summary>
+        /// <returns></returns>
+        public async Task<OrderResult[]> GetOrderAsync()
+        {
+            return await Query<OrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Gets the order history
+        /// </summary>
+        /// <param name="appOrderId">App order id</param>
+        /// <returns></returns>
+        public async Task<OrderResult[]> GetOrderAsync(long appOrderId)
+        {
+            return await Query<OrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the trade book
+        /// </summary>
+        /// <returns></returns>
+        public async Task<TradeResult[]> GetTradesAsync()
+        {
+            return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the holding book
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HoldingsResult> GetHoldingsAsync(string clientId)
+        {
+            return await Query<HoldingsResult>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/holdings?clientID={clientId}").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the 'day' position book
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PositionList> GetDayPositionAsync()
+        {
+            return await GetPositionAsync(PositionMode.DayWise).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the 'net' position book
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PositionList> GetNetPositionAsync()
+        {
+            return await GetPositionAsync(PositionMode.NetWise).ConfigureAwait(false);
+        }
+
+
+
+        private async Task<PositionList> GetPositionAsync(string dayOrNet)
+        {
+            return await Query<PositionList>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/positions?dayOrNet={dayOrNet}").ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Converts the product type of a position
+        /// </summary>
+        /// <param name="exchangeSegment">Exchange</param>
+        /// <param name="exchangeInstrumentID">Instrument id</param>
+        /// <param name="oldProductType">Old product type</param>
+        /// <param name="newProductType">New product type</param>
+        /// <param name="targetQty">Target quantity</param>
+        /// <param name="isDayWise">Is say wise</param>
+        /// <returns></returns>
+        public async Task<PositionConvertResult> ConvertPositionAsync(string exchangeSegment, long exchangeInstrumentID, string oldProductType, string newProductType, int targetQty, bool isDayWise)
+        {
+            PositionConvertPayload payload = new PositionConvertPayload()
+            {
+                oldProductType = oldProductType,
+                newProductType = newProductType,
+                exchangeSegment = exchangeSegment,
+                exchangeInstrumentID = exchangeInstrumentID,
+                targetQty = targetQty,
+                isDayWise = isDayWise
+            };
+
+            return await Query<PositionConvertResult>(HttpMethodType.PUT, $"{this.PathAndQuery}/portfolio/positions/convert", payload: payload).ConfigureAwait(false);
+        }
+
+
+
+        public async Task<MarketStatus> GetExchangeStatusAsync(string userId)
+        {
+            return await Query<MarketStatus>(HttpMethodType.GET, $"{this.PathAndQuery}/status/exchange?userID={userId}").ConfigureAwait(false);
+        }
+
+        public async Task<MessageList> GetExchangeMessagesAsync(string exchange = "NSECM")
+        {
+            return await Query<MessageList>(HttpMethodType.GET, $"{this.PathAndQuery}/messages/exchange?exchangeSegment={exchange}").ConfigureAwait(false);
+        }
+
+        
+
+        
 
         protected virtual void OnPostback<T>(InteractiveMessageType messageType, object data)
         {

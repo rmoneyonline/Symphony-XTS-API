@@ -65,5 +65,11 @@ namespace XTSAPI.Interactive
         /// </summary>
         [DataMember(Name = "orderUniqueIdentifier")]
         public string orderUniqueIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order type
+        /// </summary>
+        [DataMember(Name = "orderType")]
+        public string orderType { get; set; }
     }
 }

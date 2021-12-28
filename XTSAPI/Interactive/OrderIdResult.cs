@@ -22,6 +22,18 @@ namespace XTSAPI.Interactive
         /// </summary>
         [DataMember(Name = "AppOrderID")]
         public long AppOrderID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique order identifier
+        /// </summary>
+        [DataMember(Name = "OrderUniqueIdentifier")]
+        public string OrderUniqueIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the client id
+        /// </summary>
+        [DataMember(Name = "ClientID")]
+        public string ClientID { get; set; }
     }
 }
     

@@ -36,7 +36,8 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "ExchangeTimeStamp")]
         public long ExchangeTimeStamp { get; set; }
-
+        
+        
 
         public void AssignValue(object data)
         {

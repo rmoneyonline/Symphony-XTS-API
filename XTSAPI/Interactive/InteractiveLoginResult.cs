@@ -30,6 +30,12 @@ namespace XTSAPI.Interactive
         public bool isInvestorClient { get; set; }
 
         /// <summary>
+        /// Gets or sets if the user is one touch user
+        /// </summary>
+        [DataMember(Name = "isOneTouchUser")]
+        public bool isOneTouchUser { get; set; }
+
+        /// <summary>
         /// Gets or sets the client codes
         /// </summary>
         [DataMember(Name = "clientCodes")]
