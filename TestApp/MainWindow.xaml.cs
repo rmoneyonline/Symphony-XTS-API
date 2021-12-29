@@ -52,7 +52,8 @@ namespace TestApp
 
         const string TRADING_APPKEY = "trading_api";
         const string TRADING_SECRET = "trading_secret";
-    
+        
+
 
 
         public MainWindow()

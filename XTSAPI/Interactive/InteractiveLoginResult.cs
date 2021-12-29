@@ -48,7 +48,6 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "exchangeSegmentArray")]
         public List<KeyValuePair<string, string>> exchangeSegmentArray { get; set; }
 
-        
     }
 
     [DataContract]
@@ -124,7 +123,7 @@ namespace XTSAPI.Interactive
         /// <see cref="ProductType"/>
         /// </summary>
         [DataMember(Name = "productType")]
-        public List<string> productType { get; set; }
+        public Dictionary<string, string> productType { get; set; }
 
         /// <summary>
         /// Gets or sets the order types
