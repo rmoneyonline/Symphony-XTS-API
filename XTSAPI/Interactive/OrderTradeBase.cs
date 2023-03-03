@@ -5,6 +5,7 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,18 +152,21 @@ namespace XTSAPI.Interactive
         /// Gets or sets the order time
         /// </summary>
         [DataMember(Name = "OrderGeneratedDateTime")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime OrderGeneratedDateTime { get; set; }
 
         /// <summary>
         /// Gets or sets the exchange transaction time
         /// </summary>
         [DataMember(Name = "ExchangeTransactTime")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime ExchangeTransactTime { get; set; }
 
         /// <summary>
         /// Gets or sets the last update time
         /// </summary>
         [DataMember(Name = "LastUpdateDateTime")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime LastUpdateDateTime { get; set; }
 
         /// <summary>

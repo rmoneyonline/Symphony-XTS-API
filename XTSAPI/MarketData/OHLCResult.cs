@@ -16,8 +16,8 @@ namespace XTSAPI.MarketData
         [DataMember(Name = "exchangeInstrumentID")]
         public string exchangeInstrumentID { get; set; }
 
-        [DataMember(Name = "dataReponse")]
-        public string dataReponse { get; set; }
+        [DataMember(Name = "dataResponse")]
+        public string dataResponse { get; set; }
 
     }
 }

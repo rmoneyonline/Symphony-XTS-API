@@ -134,7 +134,7 @@ namespace XTSAPI.MarketData
         /// </summary>
         instrumentPropertyChangeEvent = 1105,
         /// <summary>
-        /// Level I vents
+        /// Level I events
         /// </summary>
         touchlineEvent = 1501,
         /// <summary>

@@ -130,7 +130,7 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<ProfileResult> GetProfileAsync(string clientId)
         {
-            return await Query<ProfileResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/profile?ClientID={clientId}").ConfigureAwait(false);
+            return await Query<ProfileResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/profile?clientID={clientId}").ConfigureAwait(false);
         }
 
         /// <summary>

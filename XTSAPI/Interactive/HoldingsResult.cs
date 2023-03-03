@@ -136,6 +136,18 @@ namespace XTSAPI.Interactive
         public double UsedQuantity { get; set; }
 
         /// <summary>
+        /// Gets or sets the BuyAvgPrice added by me
+        /// </summary>
+        [DataMember(Name = "BuyAvgPrice")]
+        public int BuyAvgPrice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the IsBuyAvgPriceProvided added by me 
+        /// </summary>
+        [DataMember(Name = "IsBuyAvgPriceProvided ")]
+        public bool IsBuyAvgPriceProvided { get; set; }
+
+        /// <summary>
         /// Gets or sets the exchange segment
         /// </summary>
         [DataMember(Name = "exchangeSegment")]

@@ -5,6 +5,7 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using CsvHelper.Configuration.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,9 +17,9 @@ using System.Threading.Tasks;
 namespace XTSAPI.MarketData
 {
     [DataContract]
-    public class SearchByStringResult : SearchBase
+    public class ContractInfo : SearchBase , IEquatable<ContractInfo>
     {
-        public SearchByStringResult()
+        public ContractInfo()
         {
             this.PriceBand = new PriceBand();
         }
@@ -27,46 +28,104 @@ namespace XTSAPI.MarketData
         /// Gets or sets the underlying instrument id
         /// </summary>
         [DataMember(Name = "UnderlyingInstrumentId")]
-        public long UnderlyingInstrumentId { get; set; }
+        [Index(14)]
+        public long? UnderlyingInstrumentId { get; set; }
 
         /// <summary>
         /// Gets or sets the underlying index name
         /// </summary>
         [DataMember(Name = "UnderlyingIndexName")]
+        [Index(15)]
         public string UnderlyingIndexName { get; set; }
 
         /// <summary>
         /// Gets or sets the contract expiration
         /// </summary>
         [DataMember(Name = "ContractExpiration")]
+        [Index(16)]
         public DateTime ContractExpiration { get; set; }
 
-        /// <summary>
-        /// Gets or sets the contrct expiration string
-        /// </summary>
-        [DataMember(Name = "ContractExpirationString")]
-        public string ContractExpirationString { get; set; }
+        ///// <summary>
+        ///// Gets or sets the contrct expiration string
+        ///// </summary>
+        //[DataMember(Name = "ContractExpirationString")]
+        //public string ContractExpirationString { get; set; }
 
-        /// <summary>
-        /// Gets or sets the remaining expiry days
-        /// </summary>
-        [DataMember(Name = "RemainingExpiryDays")]
-        public int RemainingExpiryDays { get; set; }
+        ///// <summary>
+        ///// Gets or sets the remaining expiry days
+        ///// </summary>
+        //[DataMember(Name = "RemainingExpiryDays")]
+        //public int RemainingExpiryDays { get; set; }
 
         /// <summary>
         /// Gets or sets the strike price
         /// </summary>
         [DataMember(Name = "StrikePrice")]
-        public double StrikePrice { get; set; }
+        [Index(17)]
+        public double? StrikePrice { get; set; }
 
         /// <summary>
         /// Gets or sets the option type
         /// </summary>
         [DataMember(Name = "OptionType")]
-        public int OptionType { get; set; }
+        [Index(18)]
+        public int? OptionType { get; set; }
 
+        public bool Equals(ContractInfo other)
+        {
+            if(other == null) { return false; }
+            else
+            {
+                if(this.Series.ToUpperInvariant() == "OPTIDX" && other.Series.ToUpperInvariant() == "OPTIDX")
+                {
+                    if(this.Name == other.Name && this.ContractExpiration == other.ContractExpiration
+                        && this.StrikePrice == other.StrikePrice && this.OptionType == other.OptionType) 
+                    {
+                        return true; 
+                    }
+                }
+                else if (this.Series.ToUpperInvariant() == "FUTIDX" && other.Series.ToUpperInvariant() == "FUTIDX")
+                {
+                    if (this.Name == other.Name && this.ContractExpiration == other.ContractExpiration) 
+                    { 
+                        return true; 
+                    }
+                }
+                else if (this.Series.ToUpperInvariant() == "OPTSTK" && other.Series.ToUpperInvariant() == "OPTSTK")
+                {
+                    if (this.Name == other.Name && this.ContractExpiration == other.ContractExpiration
+                        && this.StrikePrice == other.StrikePrice && this.OptionType == other.OptionType) 
+                    { 
+                        return true; 
+                    }
+                }
+                else if (this.Series.ToUpperInvariant() == "FUTSTK" && other.Series.ToUpperInvariant() == "FUTSTK")
+                {
+                    if (this.Name == other.Name && this.ContractExpiration == other.ContractExpiration) 
+                    { 
+                        return true; 
+                    }
+                }
+                else if (this.Series.ToUpperInvariant() == "EQ" && other.Series.ToUpperInvariant() == "EQ")
+                {
+                    if (this.Name == other.Name && this.ContractExpiration == other.ContractExpiration) 
+                    { 
+                        return true; 
+                    }
+                }
+                else if(this.Series.ToUpperInvariant() == "INDEX" && other.Series.ToUpperInvariant() == "INDEX" && this.Name == other.Name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-
+        public override bool Equals(object obj)
+        {
+            if(obj == this) return Equals(obj as ContractInfo);
+            return false;
+        }
 
         public bool Parse(string line)
         {

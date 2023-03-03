@@ -94,7 +94,9 @@ namespace XTSAPI.MarketData
                         { "source", string.IsNullOrEmpty(source) ? OrderSource.WebAPI : source },
                         { "publishFormat", publishFormat.ToString() },
                         { "broadcastMode", broadcastMode.ToString() }
-                    }
+                    },
+                Timeout = 5000
+                
             };
 
             this.Socket = IO.Socket(httpClient.BaseAddress, options);
@@ -230,6 +232,28 @@ namespace XTSAPI.MarketData
         }
 
         /// <summary>
+        /// Get Contract
+        /// </summary>
+        /// <param name="exchangeSegmentList">exchangeSegmet lis</param>
+        /// <returns></returns>
+        public async Task<ContractInfo> GetContractAsync<T>(List<string> exchangeSegmentList)
+        {
+            ContractRequestPayload payload = new ContractRequestPayload()
+            {
+                exchangeSegmentList = exchangeSegmentList
+            };
+            return await GetContractAsync<ContractInfo>(HttpMethodType.POST, $"{this.PathAndQuery}/instruments/master", payload).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute Contract request
+        /// </summary>
+        public async Task<ContractInfo> GetContractAsync<T>(HttpMethodType methodType, string url, Payload payload)
+        {
+            return await Query<ContractInfo>(methodType,url, payload : payload).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Subscribe to quotes stream
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
@@ -330,9 +354,9 @@ namespace XTSAPI.MarketData
         /// <param name="searchString">String to search</param>
         /// <param name="source">Source <see cref="OrderSource"/> </param>
         /// <returns></returns>
-        public async Task<SearchByStringResult[]> SearchByStringAsync(string searchString, string source = "WEB")
+        public async Task<ContractInfo[]> SearchByStringAsync(string searchString, string source = "WEB")
         {
-            return await Query<SearchByStringResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/search/instruments/?searchString={searchString}&source={source}").ConfigureAwait(false);
+            return await Query<ContractInfo[]>(HttpMethodType.GET, $"{this.PathAndQuery}/search/instruments/?searchString={searchString}&source={source}").ConfigureAwait(false);
         }
 
 

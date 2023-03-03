@@ -89,5 +89,52 @@ namespace XTSAPI
             }
         }
 
+
+        public static string GetExchangefromInt(int value)
+        {
+            switch(value)
+            {
+                case (int)ExchangeSegment.NSECO:
+                    return "NSECO";
+                    break;
+                case (int)ExchangeSegment.NSECD:
+                    return "NSECD";
+                    break;
+                case (int)ExchangeSegment.NSECM:
+                    return "NSECM";
+                    break;
+                case (int)ExchangeSegment.NSEFO:
+                    return "NSEFO";
+                    break;
+                case (int)ExchangeSegment.BSECM:
+                    return "BSECM";
+                    break;
+                case (int)ExchangeSegment.BSEFO:
+                    return "BSEFO";
+                    break;
+                case (int)ExchangeSegment.BSECO:
+                    return "BSECO";
+                    break;
+                case (int)ExchangeSegment.NCDEX:
+                    return "NCEDX";
+                    break;
+                case (int)ExchangeSegment.BSECD:
+                    return "BSECD";
+                    break;
+                case (int)ExchangeSegment.MSEIFO:
+                    return "MSEIFO";
+                    break;
+                case (int)ExchangeSegment.MSEICD:
+                    return "MSEICD";
+                    break;
+                case (int)ExchangeSegment.MCXFO:
+                    return "MCXFO";
+                    break;
+                default:
+                    return "NONE";
+
+            }
+        }
+
     }
 }

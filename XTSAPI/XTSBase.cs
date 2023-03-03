@@ -387,7 +387,7 @@ namespace XTSAPI
         /// <param name="masterDataPath">Master data path</param>
         /// <param name="filePath">FilePath, if defined will save the json response in the defined file</param>
         /// <returns></returns>
-        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(List<string> exchanges, string filePath = null, string pathAndQuery = null)
+        public async Task<MarketData.ContractInfo[]> DownloadInstrumentDumpAsync(List<string> exchanges, string filePath = null, string pathAndQuery = null)
         {
             if (exchanges == null || exchanges.Count == 0)
                 return null;
@@ -407,7 +407,7 @@ namespace XTSAPI
         /// <param name="masterDataPath">Market data path</param>
         /// <param name="filePath">FilePath, if defined will save the json response in the defile file</param>
         /// <returns></returns>
-        public async Task<MarketData.SearchByStringResult[]> DownloadInstrumentDumpAsync(InstrumentDumpPayload payload, string filePath = null, string pathAndQuery = null)
+        public async Task<MarketData.ContractInfo[]> DownloadInstrumentDumpAsync(InstrumentDumpPayload payload, string filePath = null, string pathAndQuery = null)
         {
             if (payload == null || payload.exchangeSegmentList == null || payload.exchangeSegmentList.Count == 0)
                 return null;
@@ -455,11 +455,11 @@ namespace XTSAPI
 
                         if (res != null && !string.IsNullOrEmpty(res.result))
                         {
-                            List<MarketData.SearchByStringResult> tmp = new List<MarketData.SearchByStringResult>();
+                            List<MarketData.ContractInfo> tmp = new List<MarketData.ContractInfo>();
                             string[] lines = res.result.Split('\n');
                             foreach (var line in lines)
                             {
-                                MarketData.SearchByStringResult search = new MarketData.SearchByStringResult();
+                                MarketData.ContractInfo search = new MarketData.ContractInfo();
                                 try
                                 {
                                     search.Parse(line);
@@ -467,7 +467,7 @@ namespace XTSAPI
                                 }
                                 catch (Exception ex)
                                 {
-                                    OnException(typeof(MarketData.SearchByStringResult), ex);
+                                    OnException(typeof(MarketData.ContractInfo), ex);
                                 }
                             }
 
@@ -477,12 +477,12 @@ namespace XTSAPI
                     }
                     else
                     {
-                        OnJson(typeof(MarketData.SearchByStringResult), txt);
+                        OnJson(typeof(MarketData.ContractInfo), txt);
                     }
                 }
                 catch (Exception ex)
                 {
-                    OnException(typeof(MarketData.SearchByStringResult), ex);
+                    OnException(typeof(MarketData.ContractInfo), ex);
                 }
                 finally
                 {
