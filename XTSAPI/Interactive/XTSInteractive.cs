@@ -97,7 +97,7 @@ namespace XTSAPI.Interactive
 
             this.Socket.On("order", (order) =>
             {
-                OnPostback<OrderResult>(InteractiveMessageType.Order, order);
+                OnPostback<XTSOrderResult>(InteractiveMessageType.Order, order);
             });
 
             this.Socket.On("trade", (trade) =>
@@ -253,7 +253,7 @@ namespace XTSAPI.Interactive
         /// <param name="disclosedQty">Disclosed quantity</param>
         /// <param name="orderUniqueIdentifier">Unique order identifier</param>
         /// <returns></returns>
-        public async Task<CoverOrderResult> PlaceCoverOrderAsync(string exchangeSegment, long exchangeInstrumentId, string orderSide, string orderType,
+        public async Task<CoverXTSOrderResult> PlaceCoverOrderAsync(string exchangeSegment, long exchangeInstrumentId, string orderSide, string orderType,
             int quantity, double limitPrice, double stopPrice, int disclosedQty = 0, string orderUniqueIdentifier = "123abc")
         {
             CoverOrderPayload payload = new CoverOrderPayload()
@@ -278,9 +278,9 @@ namespace XTSAPI.Interactive
         /// </summary>
         /// <param name="payload">Cover order payload <see cref="CoverOrderPayload"/></param>
         /// <returns></returns>
-        public async Task<CoverOrderResult> PlaceCoverOrderAsync(CoverOrderPayload payload)
+        public async Task<CoverXTSOrderResult> PlaceCoverOrderAsync(CoverOrderPayload payload)
         {
-            return await Query<CoverOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/cover", payload: payload).ConfigureAwait(false);
+            return await Query<CoverXTSOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/cover", payload: payload).ConfigureAwait(false);
         }
 
         
@@ -301,7 +301,7 @@ namespace XTSAPI.Interactive
         }
 
 
-        public async Task<BracketOrderResult> PlaceBracketOrderAsync(string clientId, string exchangeSegment, long exchangeInstrumentID, string orderSide, string orderType, 
+        public async Task<BracketXTSOrderResult> PlaceBracketOrderAsync(string clientId, string exchangeSegment, long exchangeInstrumentID, string orderSide, string orderType, 
             int quantity, double limitPrice, double stopPrice, int squareOff, int trailingStoploss = 0, int disclosedQuantity = 0, string orderUniqueIdentifier = "abc123")
         {
             var payload = new BracketOrderPayload()
@@ -324,12 +324,12 @@ namespace XTSAPI.Interactive
 
         }
 
-        public async Task<BracketOrderResult> PlaceBracketOrderAsync(BracketOrderPayload payload)
+        public async Task<BracketXTSOrderResult> PlaceBracketOrderAsync(BracketOrderPayload payload)
         {
             if (payload == null)
                 return null;
 
-            return await Query<BracketOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/bracket", payload: payload).ConfigureAwait(false);
+            return await Query<BracketXTSOrderResult>(HttpMethodType.POST, $"{this.PathAndQuery}/orders/bracket", payload: payload).ConfigureAwait(false);
         }
 
 
@@ -407,9 +407,9 @@ namespace XTSAPI.Interactive
         /// Get the order book
         /// </summary>
         /// <returns></returns>
-        public async Task<OrderResult[]> GetOrderAsync()
+        public async Task<XTSOrderResult[]> GetOrderAsync()
         {
-            return await Query<OrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders").ConfigureAwait(false);
+            return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -417,9 +417,9 @@ namespace XTSAPI.Interactive
         /// </summary>
         /// <param name="appOrderId">App order id</param>
         /// <returns></returns>
-        public async Task<OrderResult[]> GetOrderAsync(long appOrderId)
+        public async Task<XTSOrderResult[]> GetOrderAsync(long appOrderId)
         {
-            return await Query<OrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}").ConfigureAwait(false);
+            return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}").ConfigureAwait(false);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace XTSAPI.Interactive
 {
     [DataContract]
-    public class BracketOrderResult 
+    public class BracketXTSOrderResult 
     {
 
         [DataMember(Name = "OrderUniqueIdentifier")]

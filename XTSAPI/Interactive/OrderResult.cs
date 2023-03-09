@@ -22,7 +22,7 @@ using System.Globalization;
 namespace XTSAPI.Interactive
 {
     [DataContract]
-    public class OrderResult : OrderTradeBase
+    public class XTSOrderResult : OrderTradeBase
     {
         /// <summary>
         /// Gets or sets the order expiration date

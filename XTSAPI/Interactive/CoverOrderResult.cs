@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace XTSAPI.Interactive
 {
     [DataContract]
-    public class CoverOrderResult
+    public class CoverXTSOrderResult
     {
         /// <summary>
         /// Gets or sets the entry app order id
