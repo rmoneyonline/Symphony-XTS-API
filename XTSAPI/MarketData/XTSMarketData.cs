@@ -391,7 +391,7 @@ namespace XTSAPI.MarketData
                     string str = data.ToString();
                     if (string.IsNullOrEmpty(str))
                         return;
-
+                    Console.WriteLine(typeof(T));
                     quote = ParseString<T>(str, triggerJsonEvent: false);
                 }
 

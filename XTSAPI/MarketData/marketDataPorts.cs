@@ -142,10 +142,6 @@ namespace XTSAPI.MarketData
         /// </summary>
         marketDepthEvent = 1502,
         /// <summary>
-        /// Top gainers and loser event
-        /// </summary>
-        topGainerLosserEvent = 1503,
-        /// <summary>
         /// Index event
         /// </summary>
         indexDataEvent = 1504,
@@ -153,10 +149,6 @@ namespace XTSAPI.MarketData
         /// Candle event
         /// </summary>
         candleDataEvent = 1505,
-        /// <summary>
-        /// General message broadcast event
-        /// </summary>
-        generalMessageBroadcastEvent = 1506,
         /// <summary>
         /// Exchange trading status event
         /// </summary>
@@ -166,18 +158,10 @@ namespace XTSAPI.MarketData
         /// </summary>
         openInterestEvent = 1510,
         /// <summary>
-        /// Instrument subscription info
+        /// Last Traded Price event
         /// </summary>
-        instrumentSubscriptionInfo = 5505,
-        /// <summary>
-        /// Level III 30 depth picture
-        /// </summary>
-        marketDepthEvent30 = 5014,
-        /// <summary>
-        /// Level III 100 depth picture
-        /// </summary>
-        marketDepthEvent100 = 5018
-        
+        LTPEvent = 1510
+
 
     }
 }

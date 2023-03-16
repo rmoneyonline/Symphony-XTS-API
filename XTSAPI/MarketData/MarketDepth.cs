@@ -5,6 +5,7 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -142,8 +143,9 @@ namespace XTSAPI.MarketData
         /// <summary>
         /// Gets or sets the market depth position. The partial stream only broadcasteds the position
         /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         [IgnoreDataMember]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int Position { get; set; } = 0;
 
         

@@ -5,6 +5,9 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
+using CsvHelper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,6 +15,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.SqlServer.Server;
+using System.Globalization;
 
 namespace XTSAPI.Interactive
 {
@@ -40,6 +45,7 @@ namespace XTSAPI.Interactive
         /// Gets or sets the reference order id
         /// </summary>
         [DataMember(Name = "OrderReferenceID")]
+        [JsonConverter(typeof(StringConverter))]
         public string OrderReferenceID { get; set; }
 
         /// <summary>
@@ -52,6 +58,7 @@ namespace XTSAPI.Interactive
         /// Gets or sets the exchange order id
         /// </summary>
         [DataMember(Name = "ExchangeOrderID")]
+        [JsonConverter(typeof(StringConverter))]
         public string ExchangeOrderID { get; set; }
 
         /// <summary>
@@ -194,4 +201,29 @@ namespace XTSAPI.Interactive
         public bool IsSpread { get; set; }
 
     }
+
+    public class StringConverter : JsonConverter<string>
+    {
+        public override string ReadJson(JsonReader reader, Type objectType, string existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.String)
+            {
+                return reader.Value.ToString();
+            }
+            else if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+            else
+            {
+                throw new JsonSerializationException("Unexpected token type: " + reader.TokenType);
+            }
+        }
+
+        public override void WriteJson(JsonWriter writer, string value, JsonSerializer serializer)
+        {
+            writer.WriteValue(value);
+        }
+    }
+
 }

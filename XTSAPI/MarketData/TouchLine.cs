@@ -77,7 +77,7 @@ namespace XTSAPI.MarketData
 
         /// <summary>
         /// Gets or sets the last update time
-        /// <see cref="Globals.ToDateTime(long)"/>
+        /// <see cref="Globals.ToDateTime(long,ExchangeSegment)"/>
         /// </summary>
         [DataMember(Name = "LastUpdateTime")]
         public long LastUpdateTime { get; set; }
@@ -105,6 +105,8 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "BuyBackTotalSell")]
         public double BuyBackTotalSell { get; set; }
+      
+
 
 
         protected internal override void Parse(string field, string value)
@@ -171,19 +173,46 @@ namespace XTSAPI.MarketData
                         this.TotalValueTraded = totalvalueTraded;
                     }
                     break;
-                    /*
+                    
                 case "ai":
-                    this.ai = ParseTop(value);
+                    this.AskInfo = ParseTop(value);
                     break;
                 case "bi":
-                    this.bi = ParseTop(value);
+                    this.BidInfo = ParseTop(value);
                     break;
-                    */
+                    
                 default:
                     base.Parse(field, value);
                     break;
             }
         }
 
+
+        private Tops ParseTop(string value)
+        {
+            string[] array = value?.Split('|');
+
+            if (array == null || array.Length < 4)
+                return null;
+            Tops res = null;
+            int len = array.Length;
+            if (len > 0)
+            {
+                int.TryParse(array[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int position);
+                int.TryParse(array[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int size);
+                double.TryParse(array[2], NumberStyles.Any, CultureInfo.InvariantCulture, out double price);
+                int.TryParse(array[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out int totalOrders);
+
+                res = new Tops()
+                {
+                    Position = position,
+                    Size = size,
+                    Price = price,
+                    TotalOrders = totalOrders
+                };
+            }
+
+            return res;
+        }
     }
 }

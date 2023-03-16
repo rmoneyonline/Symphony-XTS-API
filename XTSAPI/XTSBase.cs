@@ -18,6 +18,8 @@ using XTSAPI.Interactive;
 using System.Net.Http;
 
 using Quobject.SocketIoClientDotNet.Client;
+using Newtonsoft.Json;
+using XTSAPI.MarketData;
 
 namespace XTSAPI
 {
@@ -50,15 +52,18 @@ namespace XTSAPI
 
             try
             {
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(str, new Newtonsoft.Json.JsonSerializerSettings()
+                Console.WriteLine(typeof(T));
+                var res = JsonConvert.DeserializeObject<T>(str, new Newtonsoft.Json.JsonSerializerSettings
                 {
                     NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
                     MissingMemberHandling = Newtonsoft.Json.MissingMemberHandling.Ignore
                 });
+                //var data = JsonConvert.DeserializeObject<Touchline>(str);
+                return res;
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 
@@ -362,7 +367,8 @@ namespace XTSAPI
 
             try
             {
-                return ParseJson<T>(str);
+                var res = ParseJson<T>(str);
+                return res;
                 /*
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(str, new Newtonsoft.Json.JsonSerializerSettings()
                 {
