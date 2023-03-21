@@ -187,6 +187,7 @@
     <Compile Include="Interactive\HoldingsResult.cs" />
     <Compile Include="Interactive\InteractiveLoginResult.cs" />
     <Compile Include="Interactive\OrderTradeBase.cs" />
+    <Compile Include="MarketData\LTPEvent.cs" />
     <Compile Include="MarketData\BroadcastMode.cs" />
     <Compile Include="MarketData\ContractMapper.cs" />
     <Compile Include="MarketData\ContractRequest.cs" />

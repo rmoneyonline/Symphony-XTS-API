@@ -15,26 +15,26 @@ namespace XTSAPI.MarketData
     public sealed class ContractMapper : ClassMap<ContractInfo>
     {
         public ContractMapper() {
-            Map(m => m.ExchangeSegment).Index(0).TypeConverter<ExchangeSegmentConverter>();
-            Map(m => m.ExchangeInstrumentID).Index(1);
-            Map(m => m.InstrumentType).Index(2).TypeConverter<IntConverter>();
-            Map(m => m.Name).Index(3).TypeConverter<RemoveSpaces>();
-            Map(m => m.Description).Index(4);
-            Map(m => m.Series).Index(5);
-            Map(m => m.NameWithSeries).Index(6);
-            Map(m => m.InstrumentID).Index(7).TypeConverter<LongConverter>();
-            Map(m => m.PriceBand.High).Index(8).TypeConverter<doublePriceConverter>();
-            Map(m => m.PriceBand.Low).Index(9).TypeConverter<doublePriceConverter>();
-            Map(m => m.FreezeQty).Index(10).TypeConverter<doublePriceConverter>();
-            Map(m => m.TickSize).Index(11).TypeConverter<doublePriceConverter>();
-            Map(m => m.LotSize).Index(12).TypeConverter<IntConverter>();
-            Map(m => m.MultiPlier).Index(13).TypeConverter<doublePriceConverter>();
-            Map(m => m.UnderlyingInstrumentId).Index(14).TypeConverter<LongConverter>();
-            Map(m => m.UnderlyingIndexName).Index(15).TypeConverter<NameConverter>();
-            Map(m => m.ContractExpiration).Index(16).TypeConverter<DateTimeConverter>();
-            Map(m => m.StrikePrice).Index(17).TypeConverter<doublePriceConverter>();
-            Map(m => m.OptionType).Index(18).TypeConverter<IntConverter>();
-            //Map(m => m.DisplayName).Index(19).TypeConverter<NameConverter>();
+            Map(m => m.ExchangeSegment).Index(0).TypeConverter<ExchangeSegmentConverter>();//a
+            Map(m => m.ExchangeInstrumentID).Index(1);//b
+            Map(m => m.InstrumentType).Index(2).TypeConverter<IntConverter>();//c
+            Map(m => m.Name).Index(3).TypeConverter<RemoveSpaces>();//d
+            Map(m => m.Description).Index(4);//e
+            Map(m => m.Series).Index(5);//f
+            Map(m => m.NameWithSeries).Index(6);//g
+            Map(m => m.InstrumentID).Index(7).TypeConverter<LongConverter>();//h
+            Map(m => m.PriceBand.High).Index(8).TypeConverter<doublePriceConverter>();//i
+            Map(m => m.PriceBand.Low).Index(9).TypeConverter<doublePriceConverter>();//j
+            Map(m => m.FreezeQty).Index(10).TypeConverter<doublePriceConverter>();//k
+            Map(m => m.TickSize).Index(11).TypeConverter<doublePriceConverter>();//l
+            Map(m => m.LotSize).Index(12).TypeConverter<IntConverter>();//m
+            Map(m => m.MultiPlier).Index(13).TypeConverter<doublePriceConverter>();//n
+            Map(m => m.UnderlyingInstrumentId).Index(14).TypeConverter<LongConverter>();//o
+            Map(m => m.UnderlyingIndexName).Index(15).TypeConverter<NameConverter>();//p
+            Map(m => m.ContractExpiration).Index(16).TypeConverter<DateTimeConverter>();//q
+            Map(m => m.StrikePrice).Index(17).TypeConverter<doublePriceConverter>();//r
+            Map(m => m.OptionType).Index(18).TypeConverter<IntConverter>();//s
+           
             //Map(m => m.ExchangeName).Index(20).TypeConverter<NameConverter>();
         }
     }

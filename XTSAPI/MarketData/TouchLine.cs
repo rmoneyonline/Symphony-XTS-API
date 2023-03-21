@@ -105,7 +105,7 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "BuyBackTotalSell")]
         public double BuyBackTotalSell { get; set; }
-      
+
 
 
 

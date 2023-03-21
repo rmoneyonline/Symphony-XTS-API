@@ -160,7 +160,7 @@ namespace XTSAPI.MarketData
         /// <summary>
         /// Last Traded Price event
         /// </summary>
-        LTPEvent = 1510
+        LTPEvent = 1512
 
 
     }
