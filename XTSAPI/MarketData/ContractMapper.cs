@@ -18,7 +18,7 @@ namespace XTSAPI.MarketData
             Map(m => m.ExchangeSegment).Index(0).TypeConverter<ExchangeSegmentConverter>();//a
             Map(m => m.ExchangeInstrumentID).Index(1);//b
             Map(m => m.InstrumentType).Index(2).TypeConverter<IntConverter>();//c
-            Map(m => m.Name).Index(3).TypeConverter<RemoveSpaces>();//d
+            Map(m => m.Name).Index(3)/*.TypeConverter<RemoveSpaces>()*/;//d
             Map(m => m.Description).Index(4);//e
             Map(m => m.Series).Index(5);//f
             Map(m => m.NameWithSeries).Index(6);//g
