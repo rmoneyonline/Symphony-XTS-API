@@ -360,10 +360,10 @@ namespace XTSAPI.MarketData
         }
 
 
-        public async Task<OHLCResult> GetOHLCHistoryAsync(ExchangeSegment exchangeSegment, long exchangeInstrumentId, DateTime startTime, DateTime endTime, int compressionValue)
+        public async Task<OHLCResult> GetOHLCHistoryAsync(string exchangeSegment, long exchangeInstrumentId, DateTime startTime, DateTime endTime, int compressionValue)
         {
             return await Query<OHLCResult>(HttpMethodType.GET, string.Format(CultureInfo.InvariantCulture, "{0}/instruments/ohlc?exchangeSegment={1}&exchangeInstrumentID={2}&startTime={3:MMM dd yyyy HHmmss}&endTime={4:MMM dd yyyy HHmmss}&compressionValue={5}",
-                this.PathAndQuery, exchangeSegment.ToString(), exchangeInstrumentId, startTime, endTime, compressionValue)).ConfigureAwait(false);
+                this.PathAndQuery, exchangeSegment, exchangeInstrumentId, startTime, endTime, compressionValue)).ConfigureAwait(false);
         }
 
 

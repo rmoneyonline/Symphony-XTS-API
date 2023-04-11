@@ -7,19 +7,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Net;
-using System.Runtime.Serialization.Json;
 using System.IO;
-using System.Runtime.CompilerServices;
-using XTSAPI.Interactive;
 using System.Net.Http;
-
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json;
-using XTSAPI.MarketData;
 
 namespace XTSAPI
 {
