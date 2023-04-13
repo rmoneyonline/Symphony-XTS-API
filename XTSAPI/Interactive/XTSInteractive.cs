@@ -140,7 +140,7 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<BalanceResult> GetBalanceAsync(string clientId)
         {
-            return await Query<BalanceResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/balance").ConfigureAwait(false);
+            return await Query<BalanceResult>(HttpMethodType.GET, $"{this.PathAndQuery}/user/balance?clientID={clientId}").ConfigureAwait(false);
         }
 
         /// <summary>
