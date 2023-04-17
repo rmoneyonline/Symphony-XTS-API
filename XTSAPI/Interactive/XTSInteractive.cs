@@ -219,7 +219,7 @@ namespace XTSAPI.Interactive
                 modifiedTimeInForce = timeInForce,
                 modifiedLimitPrice = limitPrice,
                 modifiedStopPrice = stopPrice,
-                modifiedDisclosedQuantity = disclosedQty,
+                modifiedDisclosedQuantity = disclosedQty
             };
 
             return await ModifyOrderAsync(payload).ConfigureAwait(false);
