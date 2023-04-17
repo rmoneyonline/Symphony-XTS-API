@@ -24,6 +24,13 @@ namespace XTSAPI.Interactive
         public long appOrderID { get; set; }
 
         /// <summary>
+        /// Gets or sets the modified clientID{For pro : ******, client: "clientID"
+        /// <see cref="clientID"/>
+        /// </summary>
+        [DataMember(Name = "clientID")]
+        public string clientID { get; set; }
+
+        /// <summary>
         /// Gets or sets the modified product type
         /// <see cref="ProductType"/>
         /// </summary>

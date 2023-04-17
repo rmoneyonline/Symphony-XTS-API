@@ -40,5 +40,12 @@ namespace XTSAPI.Interactive
         [DataMember(Name = "timeInForce")]
         public string timeInForce { get; set; }
 
+        /// <summary>
+        /// Gets or sets the clientID type: For Pro: "*****" and for client: clientID
+        /// <see cref="clientID"/>
+        /// </summary>
+        [DataMember(Name = "clientID")]
+        public string clientID { get; set; }
+
     }
 }
