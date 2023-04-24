@@ -240,9 +240,9 @@ namespace XTSAPI.Interactive
         /// </summary>
         /// <param name="appOrderID">App order id</param>
         /// <returns></returns>
-        public async Task<OrderIdResult> CancelOrderAsync(long appOrderId)
+        public async Task<OrderIdResult> CancelOrderAsync(long appOrderId, string clientID)
         {
-            return await Query<OrderIdResult>(HttpMethodType.DELETE, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}").ConfigureAwait(false);
+            return await Query<OrderIdResult>(HttpMethodType.DELETE, $"{this.PathAndQuery}/orders?appOrderID={appOrderId}&clientID={clientID}").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace XTSAPI.Interactive
         /// <returns></returns>
         public async Task<XTSOrderResult[]> GetOrderAsync(string clientID = "*****")
         {
-            return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/dealerorderbook?clientID={clientID}").ConfigureAwait(false);
+            return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?clientID={clientID}").ConfigureAwait(false);
         }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace XTSAPI.MarketData
         /// </summary>
         [DataMember(Name = "StrikePrice")]
         [Index(17)]
-        public double? StrikePrice { get; set; }
+        public double StrikePrice { get; set; }
 
         /// <summary>
         /// Gets or sets the option type
