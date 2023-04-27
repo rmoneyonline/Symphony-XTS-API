@@ -1,4 +1,4 @@
-﻿/*
+/*
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
@@ -176,7 +176,6 @@ namespace XTSAPI.Interactive
                 orderUniqueIdentifier = orderUniqueIdentifier,
                 productType = productType,
                 timeInForce = timeInForce,
-                clientID = "*****"
             };
 
             return await PlaceOrderAsync(payload).ConfigureAwait(false);
@@ -211,7 +210,6 @@ namespace XTSAPI.Interactive
             ModifyOrderPayload payload = new ModifyOrderPayload()
             {
                 appOrderID = appOrderId,
-                clientID = "*****",
                 orderUniqueIdentifier = orderUniqueIdentifier,
                 modifiedOrderType = orderType,
                 modifiedOrderQuantity = quantity,
@@ -411,7 +409,7 @@ namespace XTSAPI.Interactive
         /// Get the order book
         /// </summary>
         /// <returns></returns>
-        public async Task<XTSOrderResult[]> GetOrderAsync(string clientID = "*****")
+        public async Task<XTSOrderResult[]> GetOrderAsync(string clientID)
         {
             return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?clientID={clientID}").ConfigureAwait(false);
         }
@@ -430,9 +428,9 @@ namespace XTSAPI.Interactive
         /// Get the trade book
         /// </summary>
         /// <returns></returns>
-        public async Task<TradeResult[]> GetTradesAsync(string clientID = "*****")
+        public async Task<TradeResult[]> GetTradesAsync()
         {
-            return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades?clientID=*****").ConfigureAwait(false);
+            return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -466,8 +464,7 @@ namespace XTSAPI.Interactive
 
         private async Task<PositionList> GetPositionAsync(string dayOrNet, string clientID = "*****")
         {
-            //In response it will display position of both clients which are only placed by the dealer.
-            return await Query<PositionList>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/dealerpositions?dayOrNet={dayOrNet}").ConfigureAwait(false);
+            return await Query<PositionList>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/positions?dayOrNet={dayOrNet}").ConfigureAwait(false);
 
             //If you pass clientID in endpoint, then it will display position of that particular client only which are placed by the dealer
 
