@@ -175,7 +175,7 @@ namespace XTSAPI.Interactive
                 orderType = orderType,
                 orderUniqueIdentifier = orderUniqueIdentifier,
                 productType = productType,
-                timeInForce = timeInForce,
+                timeInForce = timeInForce
             };
 
             return await PlaceOrderAsync(payload).ConfigureAwait(false);
@@ -462,10 +462,9 @@ namespace XTSAPI.Interactive
 
 
 
-        private async Task<PositionList> GetPositionAsync(string dayOrNet, string clientID = "*****")
+        private async Task<PositionList> GetPositionAsync(string dayOrNet)
         {
             return await Query<PositionList>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/positions?dayOrNet={dayOrNet}").ConfigureAwait(false);
-
             //If you pass clientID in endpoint, then it will display position of that particular client only which are placed by the dealer
 
             //return await Query<PositionList>(HttpMethodType.GET, $"{this.PathAndQuery}/portfolio/dealerpositions?dayOrNet={dayOrNet}&clientID={clientID}").ConfigureAwait(false);
