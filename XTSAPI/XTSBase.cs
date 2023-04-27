@@ -1,4 +1,4 @@
-﻿/*
+/*
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
@@ -247,7 +247,7 @@ namespace XTSAPI
         /// <param name="requestUri">Url</param>
         /// <param name="payload">Payload in case of POST and PUT queries</param>
         /// <returns></returns>
-        protected async Task<T> Query<T>(HttpMethodType httpMethod, string requestUri, Payload payload = null)
+        protected async Task<T> Query<T>(HttpMethodType httpMethod, string requestUri, Payload payload = null, bool doCleanup = true)
         {
             
             HttpClient client = this.HttpClient;
@@ -316,7 +316,7 @@ namespace XTSAPI
 
             if (response.IsSuccessStatusCode)
             {
-                T obj = ParseResponse<T>(txt);
+                T obj = ParseResponse<T>(txt,doCleanup);
                 return obj;
             }
             else
@@ -327,9 +327,9 @@ namespace XTSAPI
             return default(T);
         }
 
-        protected T ParseResponse<T>(string str)
+        protected T ParseResponse<T>(string str, bool doCleanup = true)
         {
-            Response<T> response = this.ParseString<Response<T>>(str, triggerJsonEvent: false);
+            Response<T> response = this.ParseString<Response<T>>(str, triggerJsonEvent: false, doCleanup);
 
             OnJson(typeof(T), str);
 
@@ -347,7 +347,7 @@ namespace XTSAPI
         /// <param name="str">json string</param>
         /// <param name="triggerJsonEvent">If the <see cref="Json"/> event be invoked</param>
         /// <returns></returns>
-        protected T ParseString<T>(string str, bool triggerJsonEvent = true)
+        protected T ParseString<T>(string str, bool triggerJsonEvent = true, bool doCleanup = true)
         {
             if (string.IsNullOrEmpty(str))
                 return default(T);
@@ -359,7 +359,7 @@ namespace XTSAPI
 
             try
             {
-                var res = ParseJson<T>(str);
+                var res = ParseJson<T>(str,doCleanup);
                 return res;
                 /*
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(str, new Newtonsoft.Json.JsonSerializerSettings()

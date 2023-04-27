@@ -1,4 +1,4 @@
-﻿/*
+/*
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
@@ -236,21 +236,21 @@ namespace XTSAPI.MarketData
         /// </summary>
         /// <param name="exchangeSegmentList">exchangeSegmet lis</param>
         /// <returns></returns>
-        public async Task<ContractInfo> GetContractAsync<T>(List<string> exchangeSegmentList)
+        public async Task<object> GetContractAsync<T>(List<string> exchangeSegmentList)
         {
             ContractRequestPayload payload = new ContractRequestPayload()
             {
                 exchangeSegmentList = exchangeSegmentList
             };
-            return await GetContractAsync<ContractInfo>(HttpMethodType.POST, $"{this.PathAndQuery}/instruments/master", payload).ConfigureAwait(false);
+            return await GetContractAsync<object>(HttpMethodType.POST, $"{this.PathAndQuery}/instruments/master", payload).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Execute Contract request
         /// </summary>
-        public async Task<ContractInfo> GetContractAsync<T>(HttpMethodType methodType, string url, Payload payload)
+        public async Task<object> GetContractAsync<T>(HttpMethodType methodType, string url, Payload payload)
         {
-            return await Query<ContractInfo>(methodType,url, payload : payload).ConfigureAwait(false);
+            return await Query<object>(methodType, url, payload: payload, false).ConfigureAwait(false);
         }
 
         /// <summary>

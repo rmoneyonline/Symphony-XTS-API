@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CsvHelper, Version=19.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\..\Lean.Brokerages.XTSBrokerage\packages\CsvHelper.19.0.0\lib\net47\CsvHelper.dll</HintPath>
+      <HintPath>..\..\Lean\packages\CsvHelper.19.0.0\lib\net47\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="EngineIoClientDotNet, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Lean.Brokerages.XTSBrokerage\packages\EngineIoClientDotNet.1.0.2-beta1\lib\net45\EngineIoClientDotNet.dll</HintPath>
@@ -42,7 +42,7 @@
       <HintPath>..\..\Lean.Brokerages.XTSBrokerage\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\Lean.Brokerages.XTSBrokerage\packages\Microsoft.Bcl.HashCode.1.1.0\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+      <HintPath>..\..\Lean\packages\Microsoft.Bcl.HashCode.1.1.0\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\Lean.Brokerages.XTSBrokerage\packages\Newtonsoft.Json.13.0.3-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
