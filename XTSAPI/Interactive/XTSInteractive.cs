@@ -161,24 +161,47 @@ namespace XTSAPI.Interactive
         /// <param name="orderUniqueIdentifier">Unique order identifier</param>
         /// <returns></returns>
         public async Task<OrderIdResult> PlaceOrderAsync(string exchangeSegment, long exchangeInstrumentId, string orderSide, string orderType,
-            int quantity, double limitPrice, double stopPrice, string productType, string timeInForce, int disclosedQty = 0, string orderUniqueIdentifier = "123abc")
+            int quantity, double limitPrice, double stopPrice, string productType, string timeInForce, int disclosedQty = 0, string orderUniqueIdentifier = "123abc",bool isClientID = true)
         {
-            OrderPayload payload = new OrderPayload()
+            if (isClientID)
             {
-                exchangeSegment = exchangeSegment,
-                exchangeInstrumentID = exchangeInstrumentId,
-                limitPrice = limitPrice,
-                stopPrice = stopPrice,
-                orderQuantity = quantity,
-                disclosedQuantity = disclosedQty,
-                orderSide = orderSide,
-                orderType = orderType,
-                orderUniqueIdentifier = orderUniqueIdentifier,
-                productType = productType,
-                timeInForce = timeInForce
-            };
+                OrderPayload payload = new OrderPayload()
+                {
+                    exchangeSegment = exchangeSegment,
+                    exchangeInstrumentID = exchangeInstrumentId,
+                    limitPrice = limitPrice,
+                    stopPrice = stopPrice,
+                    orderQuantity = quantity,
+                    disclosedQuantity = disclosedQty,
+                    orderSide = orderSide,
+                    orderType = orderType,
+                    orderUniqueIdentifier = orderUniqueIdentifier,
+                    productType = productType,
+                    timeInForce = timeInForce
+                };
 
-            return await PlaceOrderAsync(payload).ConfigureAwait(false);
+                return await PlaceOrderAsync(payload).ConfigureAwait(false);
+            }
+            else
+            {
+                OrderPayload payload = new OrderPayload()
+                {
+                    exchangeSegment = exchangeSegment,
+                    exchangeInstrumentID = exchangeInstrumentId,
+                    limitPrice = limitPrice,
+                    stopPrice = stopPrice,
+                    orderQuantity = quantity,
+                    disclosedQuantity = disclosedQty,
+                    orderSide = orderSide,
+                    orderType = orderType,
+                    orderUniqueIdentifier = orderUniqueIdentifier,
+                    productType = productType,
+                    timeInForce = timeInForce,
+                    clientID = "*****"
+                };
+
+                return await PlaceOrderAsync(payload).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -205,22 +228,43 @@ namespace XTSAPI.Interactive
         /// <param name="orderUniqueIdentifier">Unique order id</param>
         /// <returns></returns>
         public async Task<OrderIdResult> ModifyOrderAsync(long appOrderId, string orderType, int quantity, double limitPrice, double stopPrice,
-            string productType, string timeInForce, int disclosedQty = 0, string orderUniqueIdentifier = "123abc")
+            string productType, string timeInForce, int disclosedQty = 0, string orderUniqueIdentifier = "123abc", bool isClientID = true)
         {
-            ModifyOrderPayload payload = new ModifyOrderPayload()
+            if (isClientID)
             {
-                appOrderID = appOrderId,
-                orderUniqueIdentifier = orderUniqueIdentifier,
-                modifiedOrderType = orderType,
-                modifiedOrderQuantity = quantity,
-                modifiedProductType = productType,
-                modifiedTimeInForce = timeInForce,
-                modifiedLimitPrice = limitPrice,
-                modifiedStopPrice = stopPrice,
-                modifiedDisclosedQuantity = disclosedQty
-            };
+                ModifyOrderPayload payload = new ModifyOrderPayload()
+                {
+                    appOrderID = appOrderId,
+                    orderUniqueIdentifier = orderUniqueIdentifier,
+                    modifiedOrderType = orderType,
+                    modifiedOrderQuantity = quantity,
+                    modifiedProductType = productType,
+                    modifiedTimeInForce = timeInForce,
+                    modifiedLimitPrice = limitPrice,
+                    modifiedStopPrice = stopPrice,
+                    modifiedDisclosedQuantity = disclosedQty
+                };
 
-            return await ModifyOrderAsync(payload).ConfigureAwait(false);
+                return await ModifyOrderAsync(payload).ConfigureAwait(false);
+            }
+            else
+            {
+                ModifyOrderPayload payload = new ModifyOrderPayload()
+                {
+                    appOrderID = appOrderId,
+                    clientID = "*****",
+                    orderUniqueIdentifier = orderUniqueIdentifier,
+                    modifiedOrderType = orderType,
+                    modifiedOrderQuantity = quantity,
+                    modifiedProductType = productType,
+                    modifiedTimeInForce = timeInForce,
+                    modifiedLimitPrice = limitPrice,
+                    modifiedStopPrice = stopPrice,
+                    modifiedDisclosedQuantity = disclosedQty
+                };
+
+                return await ModifyOrderAsync(payload).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -409,9 +453,16 @@ namespace XTSAPI.Interactive
         /// Get the order book
         /// </summary>
         /// <returns></returns>
-        public async Task<XTSOrderResult[]> GetOrderAsync(string clientID)
+        public async Task<XTSOrderResult[]> GetOrderAsync(string clientID = "*****", bool isClientID = true )
         {
-            return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?clientID={clientID}").ConfigureAwait(false);
+            if (isClientID)
+            {
+                return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?clientID={clientID}").ConfigureAwait(false);
+            }
+            else
+            {
+                return await Query<XTSOrderResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders?clientID={clientID}").ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -428,9 +479,16 @@ namespace XTSAPI.Interactive
         /// Get the trade book
         /// </summary>
         /// <returns></returns>
-        public async Task<TradeResult[]> GetTradesAsync()
+        public async Task<TradeResult[]> GetTradesAsync(string clientID = "*****", bool isClientID = true)
         {
-            return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades").ConfigureAwait(false);
+            if (isClientID)
+            {
+                return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades").ConfigureAwait(false);
+            }
+            else
+            {
+                return await Query<TradeResult[]>(HttpMethodType.GET, $"{this.PathAndQuery}/orders/trades?clientID={clientID}").ConfigureAwait(false);
+            }
         }
 
         /// <summary>

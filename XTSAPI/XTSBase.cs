@@ -223,6 +223,11 @@ namespace XTSAPI
         /// </summary>
         public string UserId { get; protected set; }
 
+        /// <summary>
+        /// Gets the isInvestorClient
+        /// </summary>
+        public string isInvestorClient { get; protected set; }
+
 
         /// <summary>
         /// Gets the connection events
