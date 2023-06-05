@@ -95,8 +95,10 @@ namespace XTSAPI.MarketData
                         { "publishFormat", publishFormat.ToString() },
                         { "broadcastMode", broadcastMode.ToString() }
                     },
-                Timeout = 5000
-                
+                Timeout = 5000,
+                ReconnectionDelay = 2000,
+                Reconnection = true
+
             };
 
             this.Socket = IO.Socket(httpClient.BaseAddress, options);

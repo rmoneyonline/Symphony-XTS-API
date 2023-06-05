@@ -151,7 +151,8 @@ namespace XTSAPI
 
             socket.On("disconnect", (data) =>
             {
-                OnConnectionState(ConnectionEvents.logout, data);
+                this.isConnectedToSocket = false;
+                OnConnectionState(ConnectionEvents.disconnect, data);
             });
 
             return true;

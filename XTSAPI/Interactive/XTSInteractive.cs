@@ -86,7 +86,10 @@ namespace XTSAPI.Interactive
                 IgnoreServerCertificateValidation = true,
                 Path = $"{this.PathAndQuery}/socket.io",
 
-                Query = new Dictionary<string, string>() { { "token", this.Token }, { "userID", base.UserId }, { "apiType", "INTERACTIVE" } }
+                Query = new Dictionary<string, string>() { { "token", this.Token }, { "userID", base.UserId }, { "apiType", "INTERACTIVE" } },
+                Timeout = 10000,
+                ReconnectionDelay = 20000,
+                Reconnection = true
             };
 
             this.Socket = IO.Socket(httpClient.BaseAddress, options);
@@ -177,7 +180,8 @@ namespace XTSAPI.Interactive
                     orderType = orderType,
                     orderUniqueIdentifier = orderUniqueIdentifier,
                     productType = productType,
-                    timeInForce = timeInForce
+                    timeInForce = timeInForce,
+                    clientID = UserId
                 };
 
                 return await PlaceOrderAsync(payload).ConfigureAwait(false);
