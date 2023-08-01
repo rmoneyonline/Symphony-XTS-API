@@ -118,6 +118,10 @@ namespace XTSAPI.Interactive
             return true;
         }
 
+        public void SocketDisconnect()
+        {
+            this.Socket.Disconnect();
+        }
         public override async Task LogoutAsync()
         {
             this.Socket?.Disconnect();

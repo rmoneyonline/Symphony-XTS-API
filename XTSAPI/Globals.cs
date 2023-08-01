@@ -30,6 +30,22 @@ namespace XTSAPI
                 case 1:
                 case 2:
                 case 3:
+                    return new DateTime(1980, 1, 1).AddSeconds(timeStamp);
+                default:
+                    return new DateTime(1970, 1, 1).AddSeconds(timeStamp);
+            }
+
+        }
+        public static DateTime HistoryDateTime(long timeStamp, int exchangeSegment)
+        {
+            if (timeStamp == 0)
+                return DateTime.MinValue;
+
+            switch (exchangeSegment)
+            {
+                case 1:
+                case 2:
+                case 3:
                     return new DateTime(1970, 1, 1).AddSeconds(timeStamp);
                 default:
                     return new DateTime(1970, 1, 1).AddSeconds(timeStamp);
