@@ -170,6 +170,13 @@ namespace XTSAPI.MarketData
                 });
             }
 
+            if (Array.IndexOf<MarketDataPorts>(marketDataPorts, MarketDataPorts.LTPEvent) >= 0)
+            {
+                this.Socket.On($"1512-{format}-{mode}", (data) =>
+                {
+                    OnData<LTPEvent>(MarketDataPorts.LTPEvent, data, publishFormat, broadcastMode);
+                });
+            }
             /*
 
             this.Socket.On($"5505-{publishFormat}", (data) =>
