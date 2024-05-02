@@ -117,11 +117,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XTSAPI\XTSAPI.csproj">
-      <Project>{0892706f-6da0-41ba-b854-4ae718fe2ec8}</Project>
-      <Name>XTSAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
