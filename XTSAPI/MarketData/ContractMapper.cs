@@ -53,52 +53,38 @@ namespace XTSAPI.MarketData
             switch (text)
             {
                 case "NSECM":
-                    return ExchangeSegment.NSECM;
-                    break;
+                    return ExchangeSegment.NSECM;
                 case "NSEFO":
-                    return ExchangeSegment.NSEFO;
-                    break;
+                    return ExchangeSegment.NSEFO;
                 case "NSECD":
-                    return ExchangeSegment.NSECD;
-                    break;
+                    return ExchangeSegment.NSECD;
                 case "NSECO":
-                    return ExchangeSegment.NSECO;
-                    break;
+                    return ExchangeSegment.NSECO;
                 case "SLBM":
-                    return ExchangeSegment.SLBM;
-                    break;
+                    return ExchangeSegment.SLBM;
                 case "BSECM":
-                    return ExchangeSegment.BSECM;
-                    break;
+                    return ExchangeSegment.BSECM;
                 case "BSEFO":
-                    return ExchangeSegment.BSEFO;
-                    break;
+                    return ExchangeSegment.BSEFO;
                 case "BSECD":
-                    return ExchangeSegment.BSECD;
-                    break;
+                    return ExchangeSegment.BSECD;
                 case "BSECO":
-                    return ExchangeSegment.BSECO;
-                    break;
+                    return ExchangeSegment.BSECO;
                 case "NCDEX":
-                    return ExchangeSegment.NCDEX;
-                    break;
+                    return ExchangeSegment.NCDEX;
                 case "MSEICM":
-                    return ExchangeSegment.MSEICM;
-                    break;
+                    return ExchangeSegment.MSEICM;
                 case "MSEIFO":
-                    return ExchangeSegment.MSEIFO;
-                    break;
+                    return ExchangeSegment.MSEIFO;
                 case "MSEICD":
-                    return ExchangeSegment.MSEICD;
-                    break;
+                    return ExchangeSegment.MSEICD;
                 case "MCXFO":
-                    return ExchangeSegment.MCXFO;
-                    break;
+                    return ExchangeSegment.MCXFO;
                 default:
                     throw new ArgumentException($"Invalid Exchange Type{text}");
 
             }
-            return null;
+            
         }
     }
 
