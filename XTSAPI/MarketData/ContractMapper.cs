@@ -54,51 +54,50 @@ namespace XTSAPI.MarketData
             {
                 case "NSECM":
                     return ExchangeSegment.NSECM;
-                    break;
+                    
                 case "NSEFO":
                     return ExchangeSegment.NSEFO;
-                    break;
+                    
                 case "NSECD":
                     return ExchangeSegment.NSECD;
-                    break;
+                    
                 case "NSECO":
                     return ExchangeSegment.NSECO;
-                    break;
+                    
                 case "SLBM":
                     return ExchangeSegment.SLBM;
-                    break;
+                    
                 case "BSECM":
                     return ExchangeSegment.BSECM;
-                    break;
+                    
                 case "BSEFO":
                     return ExchangeSegment.BSEFO;
-                    break;
+                    
                 case "BSECD":
                     return ExchangeSegment.BSECD;
-                    break;
+                    
                 case "BSECO":
                     return ExchangeSegment.BSECO;
-                    break;
+                    
                 case "NCDEX":
                     return ExchangeSegment.NCDEX;
-                    break;
+                    
                 case "MSEICM":
                     return ExchangeSegment.MSEICM;
-                    break;
+                    
                 case "MSEIFO":
                     return ExchangeSegment.MSEIFO;
-                    break;
+                    
                 case "MSEICD":
                     return ExchangeSegment.MSEICD;
-                    break;
+                    
                 case "MCXFO":
                     return ExchangeSegment.MCXFO;
-                    break;
+                    
                 default:
                     throw new ArgumentException($"Invalid Exchange Type{text}");
 
             }
-            return null;
         }
     }
 
